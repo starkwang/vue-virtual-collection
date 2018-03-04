@@ -8,7 +8,7 @@ module.exports = {
     path: path.resolve(__dirname, './dist'),
     publicPath: '/dist/',
     filename: 'index.js',
-    library:'vue-js-toggle-button',
+    library:'vue-virtual-collection',
     libraryTarget: 'umd'
   },
   module: {
