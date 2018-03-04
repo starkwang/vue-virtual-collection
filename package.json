@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "parcel dev/index.html",
+    "dev": "parcel dev/index.html -d .parcel",
     "test": "npm run test"
   },
   "repository": {
@@ -20,6 +20,7 @@
   "devDependencies": {
     "babel-core": "^6.0.0",
     "babel-loader": "^6.0.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "css-loader": "^0.25.0",
     "file-loader": "^0.9.0",
