@@ -1,13 +1,13 @@
 <style>
 #app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+    font-family: "Avenir", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
 }
 .card {
-  background: #aaa;
+    background: #aaa;
 }
 </style>
 
@@ -22,35 +22,36 @@
 
 <script>
 export default {
-  name: "App",
-  data() {
-    return {
-      amount: 200
-    };
-  },
-  computed: {
-    items() {
-      const columnHeight = [0, 0, 0]
-      return new Array(+this.amount).fill(1).map((_, index) => {
-        const column = index % 3;
-        const height = 100 + 50 * Math.random()
-        const result = {
-          data: `item${index}`,
-          height,
-          width: 100,
-          x: column * 110,
-          y: columnHeight[column]
+    name: "App",
+    data() {
+        return {
+            amount: "2000"
         }
-        columnHeight[column] += height + 10
-        return result
-      })
+    },
+    computed: {
+        items() {
+            const line = 100
+            const columnHeight = new Array(line).fill(0)
+            return new Array(+this.amount).fill(1).map((_, index) => {
+                const column = index % line
+                const height = 100 + 50 * Math.random()
+                const result = {
+                    data: `item${index}`,
+                    height,
+                    width: 100,
+                    x: column * 110,
+                    y: columnHeight[column]
+                }
+                columnHeight[column] += height + 10
+                return result
+            })
+        }
+    },
+    methods: {
+        cellSizeAndPositionGetter(item, index) {
+            const { data, ...sizeAndPosition } = item
+            return sizeAndPosition
+        }
     }
-  },
-  methods: {
-    cellSizeAndPositionGetter(item, index) {
-      const { data, ...sizeAndPosition } = item
-      return sizeAndPosition
-    }
-  }
-};
+}
 </script>
