@@ -147,11 +147,17 @@ var _vue2 = _interopRequireDefault(_vue);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = {
-    props: ['cellSizeAndPositionGetter', 'collection', 'height', 'width'],
+    props: ["cellSizeAndPositionGetter", "collection", "height", "width"],
     data: function data() {
         return {
             displayItems: []
         };
+    },
+
+    watch: {
+        collection: function collection() {
+            this.flushDisplayItems();
+        }
     },
     created: function created() {
         this.flushDisplayItems();
@@ -165,26 +171,15 @@ exports.default = {
                 y = item.y;
 
             return {
-                left: x + 'px',
-                top: y + 'px',
-                width: width + 'px',
-                height: height + 'px'
+                left: x + "px",
+                top: y + "px",
+                width: width + "px",
+                height: height + "px"
             };
         },
-        checkIfNeedRender: function (_checkIfNeedRender) {
-            function checkIfNeedRender(_x, _x2) {
-                return _checkIfNeedRender.apply(this, arguments);
-            }
-
-            checkIfNeedRender.toString = function () {
-                return _checkIfNeedRender.toString();
-            };
-
-            return checkIfNeedRender;
-        }(function (item, index) {
-            console.log(checkIfNeedRender);
+        checkIfNeedRender: function checkIfNeedRender(item, index) {
             return true;
-        }),
+        },
         onScroll: function onScroll() {
             var _$refs$outer = this.$refs.outer,
                 scrollTop = _$refs$outer.scrollTop,
@@ -202,7 +197,7 @@ exports.default = {
             var outerHeight = this.height,
                 outerWidth = this.width;
 
-            if (x + width < scrollLeft || x > scrollLeft + outerWidth || y > outerHeight + scrollTop || y + height < scrollTop) {
+            if (x + 2 * width < scrollLeft || x - width > scrollLeft + outerWidth || y - height > outerHeight + scrollTop || y + 2 * height < scrollTop) {
                 return false;
             } else {
                 return true;
@@ -234,25 +229,33 @@ exports.default = {
         },
         scrollHeight: function scrollHeight() {
             var containerHeight = 0;
+            var containerWidth = 0;
             var cellSizeAndPosition = this.cellSizeAndPosition;
 
             cellSizeAndPosition.forEach(function (sizeAndPosition) {
-                var y = sizeAndPosition.y,
+                var x = sizeAndPosition.x,
+                    y = sizeAndPosition.y,
+                    width = sizeAndPosition.width,
                     height = sizeAndPosition.height;
 
                 var bottom = y + height;
-                if (bottom > height) {
+                var right = x + width;
+                if (bottom > containerHeight) {
                     containerHeight = bottom;
+                }
+                if (right > containerWidth) {
+                    containerWidth = right;
                 }
             });
             return {
-                height: containerHeight + 'px'
+                height: containerHeight + "px",
+                width: containerWidth + "px"
             };
         },
         outerStyle: function outerStyle() {
             return {
-                height: this.height + 'px',
-                width: this.width + 'px'
+                height: this.height + "px",
+                width: this.width + "px"
             };
         }
     }
@@ -266,7 +269,7 @@ exports.default = {
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 
 var _vue = __webpack_require__(0);
@@ -280,9 +283,9 @@ var _VirtualCollection2 = _interopRequireDefault(_VirtualCollection);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var plugin = {
-  install: function install(Vue, options) {
-    Vue.component('VirtualCollection', _VirtualCollection2.default);
-  }
+    install: function install(Vue, options) {
+        Vue.component("VirtualCollection", _VirtualCollection2.default);
+    }
 };
 
 exports.default = plugin;

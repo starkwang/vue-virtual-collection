@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "parcel dev/index.html -d .parcel",
+    "dist": "webpack",
     "test": "npm run test"
   },
   "repository": {
