@@ -89,7 +89,7 @@ export default {
         cellSizeAndPosition() {
             const { height: outerHeight, width: outerWidth } = this
             const cellSizeAndPosition = this.collection.map((item, index) => {
-                const { x, y, width, height } = this.cellSizeAndPositionGetter(item)
+                const { x, y, width, height } = this.cellSizeAndPositionGetter(item, index)
                 this._cacheBoundry[index] = {
                     top: y - 5 * height,
                     bottom: y + 6 * height,

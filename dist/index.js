@@ -115,31 +115,6 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
 var _vue = __webpack_require__(0);
 
 var _vue2 = _interopRequireDefault(_vue);
@@ -160,6 +135,11 @@ exports.default = {
         }
     },
     created: function created() {
+        // get rid of getter for improve performance
+        this._cacheBoundry = [];
+        this._height = this.height;
+        this._width = this.width;
+
         this.flushDisplayItems();
     },
 
@@ -181,23 +161,20 @@ exports.default = {
             return true;
         },
         onScroll: function onScroll() {
-            var _$refs$outer = this.$refs.outer,
-                scrollTop = _$refs$outer.scrollTop,
-                scrollLeft = _$refs$outer.scrollLeft;
-
             this.flushDisplayItems();
         },
-        isInViewPort: function isInViewPort(_ref, _ref2) {
-            var x = _ref.x,
-                y = _ref.y,
-                width = _ref.width,
-                height = _ref.height;
-            var scrollTop = _ref2.scrollTop,
-                scrollLeft = _ref2.scrollLeft;
-            var outerHeight = this.height,
-                outerWidth = this.width;
+        isInViewPort: function isInViewPort(index, _ref) {
+            var scrollTop = _ref.scrollTop,
+                scrollLeft = _ref.scrollLeft;
+            var outerHeight = this._height,
+                outerWidth = this._width;
+            var _cacheBoundry$index = this._cacheBoundry[index],
+                top = _cacheBoundry$index.top,
+                bottom = _cacheBoundry$index.bottom,
+                left = _cacheBoundry$index.left,
+                right = _cacheBoundry$index.right;
 
-            if (x + 2 * width < scrollLeft || x - width > scrollLeft + outerWidth || y - height > outerHeight + scrollTop || y + 2 * height < scrollTop) {
+            if (right < scrollLeft || left - outerWidth > scrollLeft || top - scrollTop > outerHeight || bottom < scrollTop) {
                 return false;
             } else {
                 return true;
@@ -213,7 +190,7 @@ exports.default = {
                 scrollLeft = this.$refs.outer.scrollLeft;
             }
             this.displayItems = this.cellSizeAndPosition.filter(function (sizeAndPosition) {
-                return _this.isInViewPort(sizeAndPosition, { scrollTop: scrollTop, scrollLeft: scrollLeft });
+                return _this.isInViewPort(sizeAndPosition.index, { scrollTop: scrollTop, scrollLeft: scrollLeft });
             });
         }
     },
@@ -221,11 +198,25 @@ exports.default = {
         cellSizeAndPosition: function cellSizeAndPosition() {
             var _this2 = this;
 
-            return this.collection.map(function (item, index) {
-                return _extends({}, _this2.cellSizeAndPositionGetter(item), {
-                    index: index
-                });
+            var outerHeight = this.height,
+                outerWidth = this.width;
+
+            var cellSizeAndPosition = this.collection.map(function (item, index) {
+                var _cellSizeAndPositionG = _this2.cellSizeAndPositionGetter(item, index),
+                    x = _cellSizeAndPositionG.x,
+                    y = _cellSizeAndPositionG.y,
+                    width = _cellSizeAndPositionG.width,
+                    height = _cellSizeAndPositionG.height;
+
+                _this2._cacheBoundry[index] = {
+                    top: y - 5 * height,
+                    bottom: y + 6 * height,
+                    left: x - 5 * width,
+                    right: x + 6 * width
+                };
+                return { x: x, y: y, width: width, height: height, index: index };
             });
+            return cellSizeAndPosition;
         },
         scrollHeight: function scrollHeight() {
             var containerHeight = 0;
@@ -259,7 +250,29 @@ exports.default = {
             };
         }
     }
-};
+}; //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /***/ }),
 /* 3 */
@@ -299,7 +312,7 @@ exports = module.exports = __webpack_require__(5)();
 
 
 // module
-exports.push([module.i, ".vue-virtual-collection[data-v-75486378]{overflow:auto}.vue-virtual-collection-container[data-v-75486378]{position:relative}.vue-virtual-collection .cell-container[data-v-75486378]{position:absolute;top:0;background:#ddd}", ""]);
+exports.push([module.i, ".vue-virtual-collection[data-v-75486378]{overflow:auto}.vue-virtual-collection-container[data-v-75486378]{position:relative}.vue-virtual-collection .cell-container[data-v-75486378]{position:absolute;top:0}", ""]);
 
 // exports
 

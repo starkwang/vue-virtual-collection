@@ -1,7 +1,19 @@
 {
   "name": "vue-virtual-collection",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.0.1",
+  "description": "Vue component for efficiently rendering large collection data",
+  "keywords": [
+    "vue",
+    "vuejs",
+    "vue-component",
+    "virtual",
+    "collection",
+    "scrolling",
+    "infinite",
+    "virtualized",
+    "recycle",
+    "dom"
+  ],
   "main": "dist/index.js",
   "scripts": {
     "dev": "parcel dev/index.html -d .parcel",
