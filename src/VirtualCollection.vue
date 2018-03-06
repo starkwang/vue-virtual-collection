@@ -36,6 +36,11 @@ export default {
         }
     },
     created() {
+        // get rid of getter for improve performance
+        this._cacheBoundry = []
+        this._height = this.height
+        this._width = this.width
+
         this.flushDisplayItems()
     },
     methods: {
@@ -52,16 +57,16 @@ export default {
             return true
         },
         onScroll() {
-            const { scrollTop, scrollLeft } = this.$refs.outer
             this.flushDisplayItems()
         },
-        isInViewPort({ x, y, width, height }, { scrollTop, scrollLeft }) {
-            const { height: outerHeight, width: outerWidth } = this
+        isInViewPort(index, { scrollTop, scrollLeft }) {
+            const { _height: outerHeight, _width: outerWidth } = this
+            const { top, bottom, left, right } = this._cacheBoundry[index]
             if (
-                x + 6 * width < scrollLeft ||
-                x - 5 * width > scrollLeft + outerWidth ||
-                y - 5 * height > outerHeight + scrollTop ||
-                y + 6 * height < scrollTop
+                right < scrollLeft ||
+                left - outerWidth > scrollLeft ||
+                top - scrollTop > outerHeight ||
+                bottom < scrollTop
             ) {
                 return false
             } else {
@@ -76,16 +81,24 @@ export default {
                 scrollLeft = this.$refs.outer.scrollLeft
             }
             this.displayItems = this.cellSizeAndPosition.filter(sizeAndPosition =>
-                this.isInViewPort(sizeAndPosition, { scrollTop, scrollLeft })
+                this.isInViewPort(sizeAndPosition.index, { scrollTop, scrollLeft })
             )
         }
     },
     computed: {
         cellSizeAndPosition() {
-            return this.collection.map((item, index) => ({
-                ...this.cellSizeAndPositionGetter(item),
-                index
-            }))
+            const { height: outerHeight, width: outerWidth } = this
+            const cellSizeAndPosition = this.collection.map((item, index) => {
+                const { x, y, width, height } = this.cellSizeAndPositionGetter(item)
+                this._cacheBoundry[index] = {
+                    top: y - 5 * height,
+                    bottom: y + 6 * height,
+                    left: x - 5 * width,
+                    right: x + 6 * width
+                }
+                return { x, y, width, height, index }
+            })
+            return cellSizeAndPosition
         },
         scrollHeight() {
             let containerHeight = 0
