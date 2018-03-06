@@ -7,7 +7,6 @@
     .cell-container {
         position: absolute;
         top: 0;
-        background: #ddd;
     }
 }
 </style>
@@ -59,10 +58,10 @@ export default {
         isInViewPort({ x, y, width, height }, { scrollTop, scrollLeft }) {
             const { height: outerHeight, width: outerWidth } = this
             if (
-                x + 2 * width < scrollLeft ||
-                x - width > scrollLeft + outerWidth ||
-                y - height > outerHeight + scrollTop ||
-                y + 2 * height < scrollTop
+                x + 6 * width < scrollLeft ||
+                x - 5 * width > scrollLeft + outerWidth ||
+                y - 5 * height > outerHeight + scrollTop ||
+                y + 6 * height < scrollTop
             ) {
                 return false
             } else {

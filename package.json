@@ -5,7 +5,9 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "parcel dev/index.html -d .parcel",
+    "dev:demo": "parcel demo/index.html -d .parcel",
     "dist": "webpack",
+    "dist:demo": "parcel build demo/index.html -d demo/dist --no-cache --detailed-report --public-url /vue-virtual-collection/demo/dist",
     "test": "npm run test"
   },
   "repository": {
