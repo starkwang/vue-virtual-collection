@@ -1,6 +1,7 @@
 <style lang="less" scoped>
 .vue-virtual-collection {
-    overflow: auto;
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
     &-container {
         position: relative;
     }
