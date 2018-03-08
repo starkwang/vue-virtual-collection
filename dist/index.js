@@ -273,6 +273,7 @@ exports.default = {
 //
 //
 //
+//
 
 /***/ }),
 /* 3 */
@@ -312,7 +313,7 @@ exports = module.exports = __webpack_require__(5)();
 
 
 // module
-exports.push([module.i, ".vue-virtual-collection[data-v-75486378]{overflow:auto}.vue-virtual-collection-container[data-v-75486378]{position:relative}.vue-virtual-collection .cell-container[data-v-75486378]{position:absolute;top:0}", ""]);
+exports.push([module.i, ".vue-virtual-collection[data-v-75486378]{overflow:scroll;-webkit-overflow-scrolling:touch}.vue-virtual-collection-container[data-v-75486378]{position:relative}.vue-virtual-collection .cell-container[data-v-75486378]{position:absolute;top:0}", ""]);
 
 // exports
 
