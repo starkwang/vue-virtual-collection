@@ -185,12 +185,13 @@ exports.default = {
                 });
             });
         },
-        getComputedStyle: function getComputedStyle(item, index) {
-            if (!item) return;
-            var width = item.width,
-                height = item.height,
-                x = item.x,
-                y = item.y;
+        getComputedStyle: function getComputedStyle(displayItem) {
+            if (!displayItem) return;
+            var _cellSizeAndPosition$ = this.cellSizeAndPosition[displayItem.index],
+                width = _cellSizeAndPosition$.width,
+                height = _cellSizeAndPosition$.height,
+                x = _cellSizeAndPosition$.x,
+                y = _cellSizeAndPosition$.y;
 
             return {
                 left: x + "px",
