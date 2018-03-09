@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "/dist/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -88,13 +88,13 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_0__;
 
 
 /* styles */
-__webpack_require__(8)
+__webpack_require__(10)
 
-var Component = __webpack_require__(6)(
+var Component = __webpack_require__(8)(
   /* script */
   __webpack_require__(2),
   /* template */
-  __webpack_require__(7),
+  __webpack_require__(9),
   /* scopeId */
   "data-v-75486378",
   /* cssModules */
@@ -115,9 +115,38 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 var _vue = __webpack_require__(0);
 
 var _vue2 = _interopRequireDefault(_vue);
+
+var _SectionManager = __webpack_require__(4);
+
+var _SectionManager2 = _interopRequireDefault(_SectionManager);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -131,20 +160,33 @@ exports.default = {
 
     watch: {
         collection: function collection() {
+            this._sectionManager = new _SectionManager2.default();
+            this.registerCellsToSectionManager();
             this.flushDisplayItems();
         }
     },
     created: function created() {
-        // get rid of getter for improve performance
-        this._cacheBoundry = [];
-        this._height = this.height;
-        this._width = this.width;
-
+        this._sectionManager = new _SectionManager2.default();
+        this.registerCellsToSectionManager();
         this.flushDisplayItems();
     },
 
     methods: {
+        registerCellsToSectionManager: function registerCellsToSectionManager() {
+            var _this = this;
+
+            if (!this._sectionManager) {
+                this._sectionManager = new _SectionManager2.default();
+            }
+            this.collection.forEach(function (item, index) {
+                _this._sectionManager.registerCell({
+                    index: index,
+                    cellMetadatum: _this.cellSizeAndPositionGetter(item, index)
+                });
+            });
+        },
         getComputedStyle: function getComputedStyle(item, index) {
+            if (!item) return;
             var width = item.width,
                 height = item.height,
                 x = item.x,
@@ -157,31 +199,11 @@ exports.default = {
                 height: height + "px"
             };
         },
-        checkIfNeedRender: function checkIfNeedRender(item, index) {
-            return true;
-        },
-        onScroll: function onScroll() {
+        onScroll: function onScroll(e) {
             this.flushDisplayItems();
         },
-        isInViewPort: function isInViewPort(index, _ref) {
-            var scrollTop = _ref.scrollTop,
-                scrollLeft = _ref.scrollLeft;
-            var outerHeight = this._height,
-                outerWidth = this._width;
-            var _cacheBoundry$index = this._cacheBoundry[index],
-                top = _cacheBoundry$index.top,
-                bottom = _cacheBoundry$index.bottom,
-                left = _cacheBoundry$index.left,
-                right = _cacheBoundry$index.right;
-
-            if (right < scrollLeft || left - outerWidth > scrollLeft || top - scrollTop > outerHeight || bottom < scrollTop) {
-                return false;
-            } else {
-                return true;
-            }
-        },
         flushDisplayItems: function flushDisplayItems() {
-            var _this = this;
+            var _this2 = this;
 
             var scrollTop = 0;
             var scrollLeft = 0;
@@ -189,34 +211,36 @@ exports.default = {
                 scrollTop = this.$refs.outer.scrollTop;
                 scrollLeft = this.$refs.outer.scrollLeft;
             }
-            this.displayItems = this.cellSizeAndPosition.filter(function (sizeAndPosition) {
-                return _this.isInViewPort(sizeAndPosition.index, { scrollTop: scrollTop, scrollLeft: scrollLeft });
+            var indices = this._sectionManager.getCellIndices({
+                height: this.height,
+                width: this.width,
+                x: scrollLeft,
+                y: scrollTop
             });
+            var displayItems = [];
+            indices.forEach(function (index) {
+                displayItems.push(_extends({
+                    index: index
+                }, _this2.collection[index]));
+            });
+            if (window.requestAnimationFrame) {
+                window.requestAnimationFrame(function () {
+                    _this2.displayItems = displayItems;
+                    _this2.$forceUpdate();
+                });
+            } else {
+                this.displayItems = displayItems;
+                this.$forceUpdate();
+            }
         }
     },
     computed: {
         cellSizeAndPosition: function cellSizeAndPosition() {
-            var _this2 = this;
+            var _this3 = this;
 
-            var outerHeight = this.height,
-                outerWidth = this.width;
-
-            var cellSizeAndPosition = this.collection.map(function (item, index) {
-                var _cellSizeAndPositionG = _this2.cellSizeAndPositionGetter(item, index),
-                    x = _cellSizeAndPositionG.x,
-                    y = _cellSizeAndPositionG.y,
-                    width = _cellSizeAndPositionG.width,
-                    height = _cellSizeAndPositionG.height;
-
-                _this2._cacheBoundry[index] = {
-                    top: y - 5 * height,
-                    bottom: y + 6 * height,
-                    left: x - 5 * width,
-                    right: x + 6 * width
-                };
-                return { x: x, y: y, width: width, height: height, index: index };
+            return this.collection.map(function (item, index) {
+                return _this3.cellSizeAndPositionGetter(item, index);
             });
-            return cellSizeAndPosition;
         },
         scrollHeight: function scrollHeight() {
             var containerHeight = 0;
@@ -250,33 +274,211 @@ exports.default = {
             };
         }
     }
-}; //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+};
 
 /***/ }),
 /* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * A section of the Window.
+ * Window Sections are used to group nearby cells.
+ * This enables us to more quickly determine which cells to display in a given region of the Window.
+ * Sections have a fixed size and contain 0 to many cells (tracked by their indices).
+ */
+var Section = function () {
+    function Section(_ref) {
+        var height = _ref.height,
+            width = _ref.width,
+            x = _ref.x,
+            y = _ref.y;
+
+        _classCallCheck(this, Section);
+
+        this.height = height;
+        this.width = width;
+        this.x = x;
+        this.y = y;
+
+        this._indexMap = {};
+        this._indices = [];
+    }
+
+    /** Add a cell to this section. */
+
+
+    _createClass(Section, [{
+        key: "addCellIndex",
+        value: function addCellIndex(_ref2) {
+            var index = _ref2.index;
+
+            if (!this._indexMap[index]) {
+                this._indexMap[index] = true;
+                this._indices.push(index);
+            }
+        }
+
+        /** Get all cell indices that have been added to this section. */
+
+    }, {
+        key: "getCellIndices",
+        value: function getCellIndices() {
+            return this._indices;
+        }
+
+        /** Intended for debugger/test purposes only */
+
+    }, {
+        key: "toString",
+        value: function toString() {
+            return this.x + "," + this.y + " " + this.width + "x" + this.height;
+        }
+    }]);
+
+    return Section;
+}();
+
+exports.default = Section;
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Section = __webpack_require__(3);
+
+var _Section2 = _interopRequireDefault(_Section);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var SECTION_SIZE = 600;
+
+var SectionManager = function () {
+    function SectionManager() {
+        var sectionSize = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : SECTION_SIZE;
+
+        _classCallCheck(this, SectionManager);
+
+        this._sectionSize = sectionSize;
+
+        this._cellMetadata = [];
+        this._sections = {};
+    }
+
+    _createClass(SectionManager, [{
+        key: "registerCell",
+        value: function registerCell(_ref) {
+            var cellMetadatum = _ref.cellMetadatum,
+                index = _ref.index;
+
+            this._cellMetadata[index] = cellMetadatum;
+
+            this.getSections(cellMetadatum).forEach(function (section) {
+                return section.addCellIndex({ index: index });
+            });
+        }
+
+        /** Get all Sections overlapping the specified region. */
+
+    }, {
+        key: "getSections",
+        value: function getSections(_ref2) {
+            var height = _ref2.height,
+                width = _ref2.width,
+                x = _ref2.x,
+                y = _ref2.y;
+
+            var sectionXStart = Math.floor(x / this._sectionSize);
+            var sectionXStop = Math.floor((x + width - 1) / this._sectionSize);
+            var sectionYStart = Math.floor(y / this._sectionSize);
+            var sectionYStop = Math.floor((y + height - 1) / this._sectionSize);
+
+            var sections = [];
+
+            for (var sectionX = sectionXStart; sectionX <= sectionXStop; sectionX++) {
+                for (var sectionY = sectionYStart; sectionY <= sectionYStop; sectionY++) {
+                    var key = sectionX + "." + sectionY;
+
+                    if (!this._sections[key]) {
+                        this._sections[key] = new _Section2.default({
+                            height: this._sectionSize,
+                            width: this._sectionSize,
+                            x: sectionX * this._sectionSize,
+                            y: sectionY * this._sectionSize
+                        });
+                    }
+
+                    sections.push(this._sections[key]);
+                }
+            }
+
+            return sections;
+        }
+
+        /** Total number of Sections based on the currently registered cells. */
+
+    }, {
+        key: "getTotalSectionCount",
+        value: function getTotalSectionCount() {
+            return Object.keys(this._sections).length;
+        }
+
+        /**
+         * Gets all cell indices contained in the specified region.
+         * A region may encompass 1 or more Sections.
+         */
+
+    }, {
+        key: "getCellIndices",
+        value: function getCellIndices(_ref3) {
+            var height = _ref3.height,
+                width = _ref3.width,
+                x = _ref3.x,
+                y = _ref3.y;
+
+            var indices = {};
+
+            this.getSections({ height: height, width: width, x: x, y: y }).forEach(function (section) {
+                return section.getCellIndices().forEach(function (index) {
+                    indices[index] = index;
+                });
+            });
+
+            // Object keys are strings; this function returns numbers
+            return Object.keys(indices).map(function (index) {
+                return indices[index];
+            });
+        }
+    }]);
+
+    return SectionManager;
+}();
+
+exports.default = SectionManager;
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -305,10 +507,10 @@ var plugin = {
 exports.default = plugin;
 
 /***/ }),
-/* 4 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(5)();
+exports = module.exports = __webpack_require__(7)();
 // imports
 
 
@@ -319,7 +521,7 @@ exports.push([module.i, ".vue-virtual-collection[data-v-75486378]{overflow:scrol
 
 
 /***/ }),
-/* 5 */
+/* 7 */
 /***/ (function(module, exports) {
 
 /*
@@ -375,7 +577,7 @@ module.exports = function() {
 
 
 /***/ }),
-/* 6 */
+/* 8 */
 /***/ (function(module, exports) {
 
 // this module is a runtime utility for cleaner component module output and will
@@ -432,7 +634,7 @@ module.exports = function normalizeComponent (
 
 
 /***/ }),
-/* 7 */
+/* 9 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -441,37 +643,39 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "vue-virtual-collection",
     style: (_vm.outerStyle),
     on: {
-      "scroll": _vm.onScroll
+      "&scroll": function($event) {
+        _vm.onScroll($event)
+      }
     }
   }, [_c('div', {
     staticClass: "vue-virtual-collection-container",
     style: (_vm.scrollHeight)
   }, _vm._l((_vm.displayItems), function(item, index) {
     return _c('div', {
-      key: index,
+      key: item.index,
       staticClass: "cell-container",
       style: (_vm.getComputedStyle(item, index))
     }, [_vm._t("cell", null, {
-      data: _vm.collection[item.index].data
+      data: item.data
     })], 2)
   }))])
 },staticRenderFns: []}
 
 /***/ }),
-/* 8 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(4);
+var content = __webpack_require__(6);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(9)("4c3186bc", content, true);
+var update = __webpack_require__(11)("4c3186bc", content, true);
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -490,7 +694,7 @@ if (typeof DEBUG !== 'undefined' && DEBUG) {
   ) }
 }
 
-var listToStyles = __webpack_require__(10)
+var listToStyles = __webpack_require__(12)
 
 /*
 type StyleObject = {
@@ -692,7 +896,7 @@ function applyToTag (styleElement, obj) {
 
 
 /***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, exports) {
 
 /**
