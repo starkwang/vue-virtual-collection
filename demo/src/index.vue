@@ -10,13 +10,16 @@
         font-size: 30px;
     }
     .collection {
-        margin: 20px auto;
-        width: 600px;
+        margin-top: 20px;
+        .vue-virtual-collection {
+            margin: 0 auto;
+        }
     }
     .text {
         input {
             text-align: center;
             border: 0;
+            width: 75px;
             border-bottom: 1px solid #e0e0e0;
         }
     }
@@ -63,7 +66,7 @@
         <div class="title">Vue Virtual Collection</div>
         <div class="text">With <input v-model="amount"/> data in <input v-model="line"/> columns</div>
         <div class="collection">
-            <VirtualCollection :cellSizeAndPositionGetter="cellSizeAndPositionGetter" :collection="items" :height="500" :width="600">
+            <VirtualCollection :cellSizeAndPositionGetter="cellSizeAndPositionGetter" :collection="items" :height="400" :width="width">
                 <div slot="cell" slot-scope="props" class="card" :class="props.data.color">{{props.data.text}}</div>
             </VirtualCollection>
         </div>
@@ -76,7 +79,8 @@ export default {
     data() {
         return {
             amount: "100000",
-            line: "30"
+            line: "30",
+            width: (document.body.clientWidth || document.documentElement.clientWidth) - 20
         }
     },
     computed: {
@@ -93,8 +97,8 @@ export default {
                         color: this.randomColor()
                     },
                     height,
-                    width: 100,
-                    x: column * 110,
+                    width: 75,
+                    x: column * 85,
                     y: columnHeight[column]
                 }
                 columnHeight[column] += height + 10
