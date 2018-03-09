@@ -1,6 +1,11 @@
 # vue-virtual-collection
 
-Vue component for efficiently rendering large collection data
+[![npm version](https://badge.fury.io/js/vue-virtual-collection.svg)](https://badge.fury.io/js/vue-virtual-collection)
+[![Build Status](https://travis-ci.org/starkwang/vue-virtual-collection.svg?branch=master)](https://travis-ci.org/starkwang/vue-virtual-collection)
+[![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+
+
+Vue component for efficiently rendering large collection data. Inspired by [react-virtualize](https://github.com/bvaughn/react-virtualized)
 
 [Demo](https://starkwang.github.io/vue-virtual-collection/demo/dist/index.html)
 
@@ -59,3 +64,12 @@ Vue.use(VirtualCollection)
     }
 </script>
 ```
+
+### Slots
+
+###### cell
+```html
+<div slot="cell" slot-scope="yourOwnScope">{{yourOwnScope.data}}</div>
+```
+
+*The `data` property in items of `collection` will be passed into the slot scope.*
