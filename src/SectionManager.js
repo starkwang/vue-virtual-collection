@@ -54,7 +54,7 @@ export default class SectionManager {
      * Gets all cell indices contained in the specified region.
      * A region may encompass 1 or more Sections.
      */
-    getCellIndices({ height, width, x, y }){
+    getCellIndices({ height, width, x, y }) {
         const indices = {}
 
         this.getSections({ height, width, x, y }).forEach(section =>
