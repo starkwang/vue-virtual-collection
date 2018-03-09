@@ -15,8 +15,8 @@
 <template>
     <div class="vue-virtual-collection" :style="outerStyle" @scroll="onScroll" ref="outer">
         <div class="vue-virtual-collection-container" :style="scrollHeight">
-            <div v-for="(item, index) in displayItems" class="cell-container" :key="index" :style="getComputedStyle(item, index)">
-                <slot name="cell" :data="collection[item.index].data"></slot>
+            <div v-for="(item, index) in displayItems" class="cell-container" :key="item.index" :style="getComputedStyle(item, index)">
+                <slot name="cell" :data="item.data"></slot>
             </div>
         </div>
     </div>
@@ -24,6 +24,7 @@
 
 <script>
 import Vue from "vue"
+import SectionManager from "./SectionManager"
 export default {
     props: ["cellSizeAndPositionGetter", "collection", "height", "width"],
     data() {
@@ -33,19 +34,30 @@ export default {
     },
     watch: {
         collection() {
+            this._sectionManager = new SectionManager()
+            this.registerCellsToSectionManager()
             this.flushDisplayItems()
         }
     },
     created() {
-        // get rid of getter for improve performance
-        this._cacheBoundry = []
-        this._height = this.height
-        this._width = this.width
-
+        this._sectionManager = new SectionManager()
+        this.registerCellsToSectionManager()
         this.flushDisplayItems()
     },
     methods: {
+        registerCellsToSectionManager() {
+            if (!this._sectionManager) {
+                this._sectionManager = new SectionManager()
+            }
+            this.collection.forEach((item, index) => {
+                this._sectionManager.registerCell({
+                    index,
+                    cellMetadatum: this.cellSizeAndPositionGetter(item, index)
+                })
+            })
+        },
         getComputedStyle(item, index) {
+            if (!item) return
             const { width, height, x, y } = item
             return {
                 left: `${x}px`,
@@ -54,25 +66,9 @@ export default {
                 height: `${height}px`
             }
         },
-        checkIfNeedRender(item, index) {
-            return true
-        },
-        onScroll() {
+        onScroll(e) {
             this.flushDisplayItems()
-        },
-        isInViewPort(index, { scrollTop, scrollLeft }) {
-            const { _height: outerHeight, _width: outerWidth } = this
-            const { top, bottom, left, right } = this._cacheBoundry[index]
-            if (
-                right < scrollLeft ||
-                left - outerWidth > scrollLeft ||
-                top - scrollTop > outerHeight ||
-                bottom < scrollTop
-            ) {
-                return false
-            } else {
-                return true
-            }
+            this.$forceUpdate()
         },
         flushDisplayItems() {
             let scrollTop = 0
@@ -81,25 +77,25 @@ export default {
                 scrollTop = this.$refs.outer.scrollTop
                 scrollLeft = this.$refs.outer.scrollLeft
             }
-            this.displayItems = this.cellSizeAndPosition.filter(sizeAndPosition =>
-                this.isInViewPort(sizeAndPosition.index, { scrollTop, scrollLeft })
-            )
+            var indices = this._sectionManager.getCellIndices({
+                height: this.height,
+                width: this.width,
+                x: scrollLeft,
+                y: scrollTop
+            })
+            const displayItems = []
+            indices.forEach(index => {
+                displayItems.push({
+                    index,
+                    ...this.collection[index]
+                })
+            })
+            this.displayItems = displayItems
         }
     },
     computed: {
         cellSizeAndPosition() {
-            const { height: outerHeight, width: outerWidth } = this
-            const cellSizeAndPosition = this.collection.map((item, index) => {
-                const { x, y, width, height } = this.cellSizeAndPositionGetter(item, index)
-                this._cacheBoundry[index] = {
-                    top: y - 5 * height,
-                    bottom: y + 6 * height,
-                    left: x - 5 * width,
-                    right: x + 6 * width
-                }
-                return { x, y, width, height, index }
-            })
-            return cellSizeAndPosition
+            return this.collection.map((item, index) => this.cellSizeAndPositionGetter(item, index))
         },
         scrollHeight() {
             let containerHeight = 0

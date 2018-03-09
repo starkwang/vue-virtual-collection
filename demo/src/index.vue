@@ -75,8 +75,8 @@ export default {
     name: "App",
     data() {
         return {
-            amount: "100000",
-            line: "30"
+            amount: "10",
+            line: "10"
         }
     },
     computed: {
