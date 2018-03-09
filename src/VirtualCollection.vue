@@ -56,9 +56,9 @@ export default {
                 })
             })
         },
-        getComputedStyle(item, index) {
-            if (!item) return
-            const { width, height, x, y } = item
+        getComputedStyle(displayItem) {
+            if (!displayItem) return
+            const { width, height, x, y } = this.cellSizeAndPosition[displayItem.index]
             return {
                 left: `${x}px`,
                 top: `${y}px`,
