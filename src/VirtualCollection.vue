@@ -13,7 +13,7 @@
 </style>
 
 <template>
-    <div class="vue-virtual-collection" :style="outerStyle" @scroll="onScroll" ref="outer">
+    <div class="vue-virtual-collection" :style="outerStyle" @scroll.passive="onScroll" ref="outer">
         <div class="vue-virtual-collection-container" :style="scrollHeight">
             <div v-for="(item, index) in displayItems" class="cell-container" :key="item.index" :style="getComputedStyle(item, index)">
                 <slot name="cell" :data="item.data"></slot>
@@ -68,7 +68,6 @@ export default {
         },
         onScroll(e) {
             this.flushDisplayItems()
-            this.$forceUpdate()
         },
         flushDisplayItems() {
             let scrollTop = 0
@@ -90,7 +89,15 @@ export default {
                     ...this.collection[index]
                 })
             })
-            this.displayItems = displayItems
+            if (window.requestAnimationFrame) {
+                window.requestAnimationFrame(() => {
+                    this.displayItems = displayItems
+                    this.$forceUpdate()
+                })
+            } else {
+                this.displayItems = displayItems
+                this.$forceUpdate()
+            }
         }
     },
     computed: {
