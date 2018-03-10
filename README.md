@@ -9,6 +9,8 @@ Vue component for efficiently rendering large collection data. Inspired by [reac
 
 [Demo](https://starkwang.github.io/vue-virtual-collection/demo/dist/index.html)
 
+![Demo](https://starkwang.github.io/vue-virtual-collection/img/demo.png)
+
 # Usage
 
 ### Install
