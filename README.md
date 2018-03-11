@@ -67,11 +67,71 @@ Vue.use(VirtualCollection)
 </script>
 ```
 
+
+### Props
+
+##### cellSizeAndPositionGetter
+
+Type: `Function`
+
+`(item: object, index: number) -> ({ height: number, width: number, x: number, y: number })`
+
+Callback responsible for returning size and offset/position information for a given cell
+
+```js
+function cellSizeAndPositionGetter(item, index) {
+    return {
+        width: item.width,
+        height: item.height,
+        x: item.x,
+        y: item.y
+    }
+}
+```
+
+
+##### collection
+
+Type: `Array`
+
+The Data for cells to render. Each object in array Must contains `data` property, which will be passed into slot scope.
+
+```js
+const collection = [
+    { data: { text: "#1" } },
+    { data: { text: "#2" } },
+    { data: { text: "#3" } },
+    // ...
+]
+```
+
+##### width
+
+Type: `number`
+
+The width of collection
+
+##### height
+
+Type: `number`
+
+The height of collection
+
+
+
 ### Slots
 
 ###### cell
 ```html
-<div slot="cell" slot-scope="yourOwnScope">{{yourOwnScope.data}}</div>
+<div slot="cell" slot-scope="yourOwnScope">{{yourOwnScope.data.text}}</div>
 ```
 
 *The `data` property in items of `collection` will be passed into the slot scope.*
+```js
+const collection = [
+    { data: { text: "#1" } },
+    { data: { text: "#2" } },
+    { data: { text: "#3" } },
+    // ...
+]
+```
