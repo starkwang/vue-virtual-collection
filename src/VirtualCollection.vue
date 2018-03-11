@@ -30,7 +30,11 @@ export default {
         cellSizeAndPositionGetter: Function,
         collection: Array,
         height: Number,
-        width: Number
+        width: Number,
+        sectionSize: {
+            type: Number,
+            default: 300
+        }
     },
     data() {
         return {
@@ -39,20 +43,20 @@ export default {
     },
     watch: {
         collection() {
-            this._sectionManager = new SectionManager()
+            this._sectionManager = new SectionManager(this.sectionSize)
             this.registerCellsToSectionManager()
             this.flushDisplayItems()
         }
     },
     created() {
-        this._sectionManager = new SectionManager()
+        this._sectionManager = new SectionManager(this.sectionSize)
         this.registerCellsToSectionManager()
         this.flushDisplayItems()
     },
     methods: {
         registerCellsToSectionManager() {
             if (!this._sectionManager) {
-                this._sectionManager = new SectionManager()
+                this._sectionManager = new SectionManager(this.sectionSize)
             }
             this.collection.forEach((item, index) => {
                 this._sectionManager.registerCell({

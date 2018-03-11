@@ -76,6 +76,8 @@ Type: `Function`
 
 `(item: object, index: number) -> ({ height: number, width: number, x: number, y: number })`
 
+**Required: ✓**
+
 Callback responsible for returning size and offset/position information for a given cell
 
 ```js
@@ -94,6 +96,8 @@ function cellSizeAndPositionGetter(item, index) {
 
 Type: `Array`
 
+**Required: ✓**
+
 The Data for cells to render. Each object in array Must contains `data` property, which will be passed into slot scope.
 
 ```js
@@ -109,13 +113,23 @@ const collection = [
 
 Type: `number`
 
+**Required: ✓**
+
 The width of collection
 
 ##### height
 
 Type: `number`
 
+**Required: ✓**
+
 The height of collection
+
+##### sectionSize
+
+Type: `number`
+
+Optionally override the size of the sections a Collection's cells are split into. This is an advanced option and should only be used for performance tuning purposes.
 
 
 
