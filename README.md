@@ -13,12 +13,12 @@ Vue component for efficiently rendering large collection data. Inspired by [reac
 
 # Usage
 
-### Install
+## Install
 ```
 npm i vue-virtual-collection
 ```
 
-### import
+## import
 ```js
 import Vue from 'vue'
 import VirtualCollection from 'vue-virtual-collection'
@@ -26,7 +26,7 @@ import VirtualCollection from 'vue-virtual-collection'
 Vue.use(VirtualCollection)
 ```
 
-### Use it !
+## Use it !
 ```html
 <template>
     <div>
@@ -68,9 +68,9 @@ Vue.use(VirtualCollection)
 ```
 
 
-### Props
+## Props
 
-##### cellSizeAndPositionGetter
+### cellSizeAndPositionGetter
 
 Type: `Function`
 
@@ -92,7 +92,7 @@ function cellSizeAndPositionGetter(item, index) {
 ```
 
 
-##### collection
+### collection
 
 Type: `Array`
 
@@ -109,7 +109,7 @@ const collection = [
 ]
 ```
 
-##### width
+### width
 
 Type: `number`
 
@@ -117,7 +117,7 @@ Type: `number`
 
 The width of collection
 
-##### height
+### height
 
 Type: `number`
 
@@ -125,7 +125,7 @@ Type: `number`
 
 The height of collection
 
-##### sectionSize
+### sectionSize
 
 Type: `number`
 
@@ -133,9 +133,9 @@ Optionally override the size of the sections a Collection's cells are split into
 
 
 
-### Slots
+## Slots
 
-###### cell
+### cell
 ```html
 <div slot="cell" slot-scope="yourOwnScope">{{yourOwnScope.data.text}}</div>
 ```
