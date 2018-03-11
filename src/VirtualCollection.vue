@@ -26,7 +26,12 @@
 import Vue from "vue"
 import SectionManager from "./SectionManager"
 export default {
-    props: ["cellSizeAndPositionGetter", "collection", "height", "width"],
+    props: {
+        cellSizeAndPositionGetter: Function,
+        collection: Array,
+        height: Number,
+        width: Number
+    },
     data() {
         return {
             displayItems: []
