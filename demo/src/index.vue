@@ -66,7 +66,7 @@
         <div class="title">Vue Virtual Collection</div>
         <div class="text">With <input v-model="amount"/> data in <input v-model="line"/> columns</div>
         <div class="collection">
-            <VirtualCollection :cellSizeAndPositionGetter="cellSizeAndPositionGetter" :collection="items" :height="400" :width="width">
+            <VirtualCollection :cellSizeAndPositionGetter="cellSizeAndPositionGetter" :collection="items" :height="800" :width="width">
                 <div slot="cell" slot-scope="props" class="card" :class="props.data.color">{{props.data.text}}</div>
             </VirtualCollection>
         </div>

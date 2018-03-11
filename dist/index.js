@@ -151,7 +151,16 @@ var _SectionManager2 = _interopRequireDefault(_SectionManager);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = {
-    props: ["cellSizeAndPositionGetter", "collection", "height", "width"],
+    props: {
+        cellSizeAndPositionGetter: Function,
+        collection: Array,
+        height: Number,
+        width: Number,
+        sectionSize: {
+            type: Number,
+            default: 300
+        }
+    },
     data: function data() {
         return {
             displayItems: []
@@ -160,13 +169,13 @@ exports.default = {
 
     watch: {
         collection: function collection() {
-            this._sectionManager = new _SectionManager2.default();
+            this._sectionManager = new _SectionManager2.default(this.sectionSize);
             this.registerCellsToSectionManager();
             this.flushDisplayItems();
         }
     },
     created: function created() {
-        this._sectionManager = new _SectionManager2.default();
+        this._sectionManager = new _SectionManager2.default(this.sectionSize);
         this.registerCellsToSectionManager();
         this.flushDisplayItems();
     },
@@ -176,7 +185,7 @@ exports.default = {
             var _this = this;
 
             if (!this._sectionManager) {
-                this._sectionManager = new _SectionManager2.default();
+                this._sectionManager = new _SectionManager2.default(this.sectionSize);
             }
             this.collection.forEach(function (item, index) {
                 _this._sectionManager.registerCell({
