@@ -27,10 +27,28 @@ import Vue from "vue"
 import SectionManager from "./SectionManager"
 export default {
     props: {
-        cellSizeAndPositionGetter: Function,
-        collection: Array,
-        height: Number,
-        width: Number,
+        cellSizeAndPositionGetter: {
+            type: Function,
+            required: true
+        },
+        collection: {
+            type: Array,
+            required: true
+        },
+        height: {
+            type: Number,
+            required: true,
+            validator(value) {
+                return value >= 0
+            }
+        },
+        width: {
+            type: Number,
+            required: true,
+            validator(value) {
+                return value >= 0
+            }
+        },
         sectionSize: {
             type: Number,
             default: 300
