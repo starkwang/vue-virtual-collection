@@ -152,10 +152,28 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 exports.default = {
     props: {
-        cellSizeAndPositionGetter: Function,
-        collection: Array,
-        height: Number,
-        width: Number,
+        cellSizeAndPositionGetter: {
+            type: Function,
+            required: true
+        },
+        collection: {
+            type: Array,
+            required: true
+        },
+        height: {
+            type: Number,
+            required: true,
+            validator: function validator(value) {
+                return value >= 0;
+            }
+        },
+        width: {
+            type: Number,
+            required: true,
+            validator: function validator(value) {
+                return value >= 0;
+            }
+        },
         sectionSize: {
             type: Number,
             default: 300

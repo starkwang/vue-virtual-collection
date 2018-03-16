@@ -1,6 +1,6 @@
 {
   "name": "vue-virtual-collection",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Vue component for efficiently rendering large collection data",
   "keywords": [
     "vue",
@@ -32,6 +32,7 @@
   "bugs": {
     "url": "https://github.com/starkwang/vue-virtual-collection/issues"
   },
+  "sideEffects": false,
   "homepage": "https://github.com/starkwang/vue-virtual-collection#readme",
   "devDependencies": {
     "babel-core": "^6.0.0",
