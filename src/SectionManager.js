@@ -66,4 +66,8 @@ export default class SectionManager {
         // Object keys are strings; this function returns numbers
         return Object.keys(indices).map(index => indices[index])
     }
+
+    getCellMetadata(index) {
+        return this._cellMetadata[index]
+    }
 }

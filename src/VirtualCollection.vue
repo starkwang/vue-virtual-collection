@@ -14,7 +14,7 @@
 
 <template>
     <div class="vue-virtual-collection" :style="outerStyle" @scroll.passive="onScroll" ref="outer">
-        <div class="vue-virtual-collection-container" :style="scrollHeight">
+        <div class="vue-virtual-collection-container" :style="containerStyle">
             <div v-for="(item, index) in displayItems" class="cell-container" :key="item.index" :style="getComputedStyle(item, index)">
                 <slot name="cell" :data="item.data"></slot>
             </div>
@@ -56,36 +56,56 @@ export default {
     },
     data() {
         return {
-            displayItems: []
+            displayItems: [],
+            totalHeight: 0,
+            totalWidth: 0
         }
     },
     watch: {
         collection() {
-            this._sectionManager = new SectionManager(this.sectionSize)
-            this.registerCellsToSectionManager()
-            this.flushDisplayItems()
+            this.init()
         }
     },
     created() {
-        this._sectionManager = new SectionManager(this.sectionSize)
-        this.registerCellsToSectionManager()
-        this.flushDisplayItems()
+        this.init()
     },
     methods: {
+        init() {
+            this._sectionManager = new SectionManager(this.sectionSize)
+            this.registerCellsToSectionManager()
+            this.flushDisplayItems()
+        },
         registerCellsToSectionManager() {
             if (!this._sectionManager) {
                 this._sectionManager = new SectionManager(this.sectionSize)
             }
+            let totalHeight = 0
+            let totalWidth = 0
             this.collection.forEach((item, index) => {
+                // register
+                const cellMetadatum = this.cellSizeAndPositionGetter(item, index)
                 this._sectionManager.registerCell({
                     index,
-                    cellMetadatum: this.cellSizeAndPositionGetter(item, index)
+                    cellMetadatum
                 })
+
+                // compute total height and total width
+                const { x, y, width, height } = cellMetadatum
+                const bottom = y + height
+                const right = x + width
+                if (bottom > totalHeight) {
+                    totalHeight = bottom
+                }
+                if (right > totalWidth) {
+                    totalWidth = right
+                }
+                this.totalHeight = totalHeight
+                this.totalWidth = totalWidth
             })
         },
         getComputedStyle(displayItem) {
             if (!displayItem) return
-            const { width, height, x, y } = this.cellSizeAndPosition[displayItem.index]
+            const { width, height, x, y } = this._sectionManager.getCellMetadata(displayItem.index)
             return {
                 left: `${x}px`,
                 top: `${y}px`,
@@ -128,27 +148,10 @@ export default {
         }
     },
     computed: {
-        cellSizeAndPosition() {
-            return this.collection.map((item, index) => this.cellSizeAndPositionGetter(item, index))
-        },
-        scrollHeight() {
-            let containerHeight = 0
-            let containerWidth = 0
-            const { cellSizeAndPosition } = this
-            cellSizeAndPosition.forEach(sizeAndPosition => {
-                const { x, y, width, height } = sizeAndPosition
-                const bottom = y + height
-                const right = x + width
-                if (bottom > containerHeight) {
-                    containerHeight = bottom
-                }
-                if (right > containerWidth) {
-                    containerWidth = right
-                }
-            })
+        containerStyle() {
             return {
-                height: containerHeight + "px",
-                width: containerWidth + "px"
+                height: this.totalHeight + "px",
+                width: this.totalWidth + "px"
             }
         },
         outerStyle() {
