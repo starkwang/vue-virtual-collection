@@ -181,44 +181,69 @@ exports.default = {
     },
     data: function data() {
         return {
-            displayItems: []
+            displayItems: [],
+            totalHeight: 0,
+            totalWidth: 0
         };
     },
 
     watch: {
         collection: function collection() {
-            this._sectionManager = new _SectionManager2.default(this.sectionSize);
-            this.registerCellsToSectionManager();
-            this.flushDisplayItems();
+            this.init();
         }
     },
     created: function created() {
-        this._sectionManager = new _SectionManager2.default(this.sectionSize);
-        this.registerCellsToSectionManager();
-        this.flushDisplayItems();
+        this.init();
     },
 
     methods: {
+        init: function init() {
+            this._sectionManager = new _SectionManager2.default(this.sectionSize);
+            this.registerCellsToSectionManager();
+            this.flushDisplayItems();
+        },
         registerCellsToSectionManager: function registerCellsToSectionManager() {
             var _this = this;
 
             if (!this._sectionManager) {
                 this._sectionManager = new _SectionManager2.default(this.sectionSize);
             }
+            var totalHeight = 0;
+            var totalWidth = 0;
             this.collection.forEach(function (item, index) {
+                // register
+                var cellMetadatum = _this.cellSizeAndPositionGetter(item, index);
                 _this._sectionManager.registerCell({
                     index: index,
-                    cellMetadatum: _this.cellSizeAndPositionGetter(item, index)
+                    cellMetadatum: cellMetadatum
                 });
+
+                // compute total height and total width
+                var x = cellMetadatum.x,
+                    y = cellMetadatum.y,
+                    width = cellMetadatum.width,
+                    height = cellMetadatum.height;
+
+                var bottom = y + height;
+                var right = x + width;
+                if (bottom > totalHeight) {
+                    totalHeight = bottom;
+                }
+                if (right > totalWidth) {
+                    totalWidth = right;
+                }
+                _this.totalHeight = totalHeight;
+                _this.totalWidth = totalWidth;
             });
         },
         getComputedStyle: function getComputedStyle(displayItem) {
             if (!displayItem) return;
-            var _cellSizeAndPosition$ = this.cellSizeAndPosition[displayItem.index],
-                width = _cellSizeAndPosition$.width,
-                height = _cellSizeAndPosition$.height,
-                x = _cellSizeAndPosition$.x,
-                y = _cellSizeAndPosition$.y;
+
+            var _sectionManager$getCe = this._sectionManager.getCellMetadata(displayItem.index),
+                width = _sectionManager$getCe.width,
+                height = _sectionManager$getCe.height,
+                x = _sectionManager$getCe.x,
+                y = _sectionManager$getCe.y;
 
             return {
                 left: x + "px",
@@ -263,36 +288,10 @@ exports.default = {
         }
     },
     computed: {
-        cellSizeAndPosition: function cellSizeAndPosition() {
-            var _this3 = this;
-
-            return this.collection.map(function (item, index) {
-                return _this3.cellSizeAndPositionGetter(item, index);
-            });
-        },
-        scrollHeight: function scrollHeight() {
-            var containerHeight = 0;
-            var containerWidth = 0;
-            var cellSizeAndPosition = this.cellSizeAndPosition;
-
-            cellSizeAndPosition.forEach(function (sizeAndPosition) {
-                var x = sizeAndPosition.x,
-                    y = sizeAndPosition.y,
-                    width = sizeAndPosition.width,
-                    height = sizeAndPosition.height;
-
-                var bottom = y + height;
-                var right = x + width;
-                if (bottom > containerHeight) {
-                    containerHeight = bottom;
-                }
-                if (right > containerWidth) {
-                    containerWidth = right;
-                }
-            });
+        containerStyle: function containerStyle() {
             return {
-                height: containerHeight + "px",
-                width: containerWidth + "px"
+                height: this.totalHeight + "px",
+                width: this.totalWidth + "px"
             };
         },
         outerStyle: function outerStyle() {
@@ -498,6 +497,11 @@ var SectionManager = function () {
                 return indices[index];
             });
         }
+    }, {
+        key: "getCellMetadata",
+        value: function getCellMetadata(index) {
+            return this._cellMetadata[index];
+        }
     }]);
 
     return SectionManager;
@@ -677,7 +681,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, [_c('div', {
     staticClass: "vue-virtual-collection-container",
-    style: (_vm.scrollHeight)
+    style: (_vm.containerStyle)
   }, _vm._l((_vm.displayItems), function(item, index) {
     return _c('div', {
       key: item.index,
