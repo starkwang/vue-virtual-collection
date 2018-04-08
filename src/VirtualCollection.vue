@@ -23,7 +23,6 @@
 </template>
 
 <script>
-import Vue from "vue"
 import SectionManager from "./SectionManager"
 export default {
     props: {
