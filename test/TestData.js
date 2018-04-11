@@ -27,7 +27,7 @@ export const CELLS = [
     { x: 4, y: 0, width: 2, height: 2 },
     { x: 4, y: 2, width: 1, height: 1 },
     { x: 5, y: 2, width: 1, height: 1 },
-    { x: 4, y: 3, width: 2, height: 1 }
+    { x: 4, y: 3, width: 2, height: 1 },
 ]
 
 export const SECTION_SIZE = 2
