@@ -10,7 +10,7 @@
 <script type="text/ecmascript-6">
     import BScroll from 'better-scroll';
     // 获取元素的长、宽、位置
-    import {getRect} from 'common/js/dom';
+    import {getRect} from './dom';
 
     // 横向滚动
     const DIRECTION_H = 'horizontal';
