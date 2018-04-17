@@ -1,15 +1,22 @@
 <style lang="less" scoped>
-.vue-virtual-collection {
-    overflow: scroll;
-    -webkit-overflow-scrolling: touch;
-    &-container {
-        position: relative;
+ .vue-virtual-collection {
+        overflow: hidden;
+        -webkit-overflow-scrolling: touch;
+        height: 100%;
+        width: 100%
     }
+
+    .vue-virtual-collection-container {
+        position: relative;
+        overflow: hidden;
+    }
+
     .cell-container {
         position: absolute;
         top: 0;
+        overflow: hidden;
     }
-}
+
 </style>
 
 <template>
@@ -113,12 +120,12 @@ export default {
         getComputedStyle(displayItem) {
             if (!displayItem) return
             const { width, height, x, y } = this._sectionManager.getCellMetadata(displayItem.index)
-            return {
-                left: `${x}px`,
-                top: `${y}px`,
-                width: `${width}px`,
-                height: `${height}px`
-            }
+            
+             return {
+                    transform: `translate3d(${x}px, ${y}px, 0)`,
+                    width: `${width}px`,
+                    height: `${height}px`
+             }
         },
          // 垂直滚动
         verticalScroll (pos) {
