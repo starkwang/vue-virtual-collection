@@ -13,18 +13,24 @@
 </style>
 
 <template>
-    <div class="vue-virtual-collection" :style="outerStyle" @scroll.passive="onScroll" ref="outer">
-        <div class="vue-virtual-collection-container" :style="scrollHeight">
-            <div v-for="(item, index) in displayItems" class="cell-container" :key="item.index" :style="getComputedStyle(item, index)">
-                <slot name="cell" :data="item.data"></slot>
+    <div class="vue-virtual-collection" :style="outerStyle" ref="outer">
+        <vertical-scroll :listenScroll="true"
+                             :probeType="3"
+                             :bounce="false"
+                             @scroll="verticalScroll">
+            <div class="vue-virtual-collection-container" :style="containerStyle">
+                <div v-for="(item, index) in displayItems" class="cell-container" :key="item.index" :style="getComputedStyle(item, index)">
+                    <slot name="cell" :data="item.data"></slot>
+                </div>
             </div>
-        </div>
+         </vertical-scroll>
     </div>
 </template>
 
 <script>
-import Vue from "vue"
 import SectionManager from "./SectionManager"
+import VerticalScroll from "base/VerticalScroll";
+
 export default {
     props: {
         cellSizeAndPositionGetter: {
@@ -56,36 +62,57 @@ export default {
     },
     data() {
         return {
-            displayItems: []
+            displayItems: [],
+            totalHeight: 0,
+            totalWidth: 0
         }
     },
     watch: {
         collection() {
-            this._sectionManager = new SectionManager(this.sectionSize)
-            this.registerCellsToSectionManager()
-            this.flushDisplayItems()
+            this.init()
         }
     },
     created() {
-        this._sectionManager = new SectionManager(this.sectionSize)
-        this.registerCellsToSectionManager()
-        this.flushDisplayItems()
+        this.init()
     },
     methods: {
+        init() {
+            this._sectionManager = new SectionManager(this.sectionSize)
+            this.registerCellsToSectionManager()
+            // 设置当前视图我们中应该显示那些块
+            this.flushDisplayItems(0, 0);
+        },
         registerCellsToSectionManager() {
             if (!this._sectionManager) {
                 this._sectionManager = new SectionManager(this.sectionSize)
             }
+            let totalHeight = 0
+            let totalWidth = 0
             this.collection.forEach((item, index) => {
+                // register
+                const cellMetadatum = this.cellSizeAndPositionGetter(item, index)
                 this._sectionManager.registerCell({
                     index,
-                    cellMetadatum: this.cellSizeAndPositionGetter(item, index)
+                    cellMetadatum
                 })
+
+                // compute total height and total width
+                const { x, y, width, height } = cellMetadatum
+                const bottom = y + height
+                const right = x + width
+                if (bottom > totalHeight) {
+                    totalHeight = bottom
+                }
+                if (right > totalWidth) {
+                    totalWidth = right
+                }
+                this.totalHeight = totalHeight
+                this.totalWidth = totalWidth
             })
         },
         getComputedStyle(displayItem) {
             if (!displayItem) return
-            const { width, height, x, y } = this.cellSizeAndPosition[displayItem.index]
+            const { width, height, x, y } = this._sectionManager.getCellMetadata(displayItem.index)
             return {
                 left: `${x}px`,
                 top: `${y}px`,
@@ -93,62 +120,45 @@ export default {
                 height: `${height}px`
             }
         },
-        onScroll(e) {
-            this.flushDisplayItems()
+         // 垂直滚动
+        verticalScroll (pos) {
+            this.flushDisplayItems(pos.x, pos.y)
         },
-        flushDisplayItems() {
-            let scrollTop = 0
-            let scrollLeft = 0
-            if (this.$refs.outer) {
-                scrollTop = this.$refs.outer.scrollTop
-                scrollLeft = this.$refs.outer.scrollLeft
-            }
-            var indices = this._sectionManager.getCellIndices({
+        flushDisplayItems (x, y) {
+            let scrollLeft = x;
+            let scrollTop = Math.abs(y);
+
+            // 然后这里我们需要去设置当前视图中应该渲染那些块
+            // 于是我们要在 SectionManager类中定义一个方法去获取需要渲染的那个块的索引
+            let indices = this._sectionManager.getCellIndices({
                 height: this.height,
                 width: this.width,
                 x: scrollLeft,
                 y: scrollTop
-            })
-            const displayItems = []
+            });
+
+            // 到这里我们已经获取到了索引了,然后我们就可以去渲染该视图所对应的块了
+            const displayItems = [];
+
             indices.forEach(index => {
                 displayItems.push({
                     index,
                     ...this.collection[index]
                 })
-            })
-            if (window.requestAnimationFrame) {
-                window.requestAnimationFrame(() => {
-                    this.displayItems = displayItems
-                    this.$forceUpdate()
-                })
-            } else {
-                this.displayItems = displayItems
-                this.$forceUpdate()
-            }
+            });
+
+            // 重新渲染数据
+            this.displayItems = displayItems;
+
+            // 收集的滚动高度
+            this.setScrollTop(-scrollTop);
         }
     },
     computed: {
-        cellSizeAndPosition() {
-            return this.collection.map((item, index) => this.cellSizeAndPositionGetter(item, index))
-        },
-        scrollHeight() {
-            let containerHeight = 0
-            let containerWidth = 0
-            const { cellSizeAndPosition } = this
-            cellSizeAndPosition.forEach(sizeAndPosition => {
-                const { x, y, width, height } = sizeAndPosition
-                const bottom = y + height
-                const right = x + width
-                if (bottom > containerHeight) {
-                    containerHeight = bottom
-                }
-                if (right > containerWidth) {
-                    containerWidth = right
-                }
-            })
+        containerStyle() {
             return {
-                height: containerHeight + "px",
-                width: containerWidth + "px"
+                height: this.totalHeight + "px",
+                width: this.totalWidth + "px"
             }
         },
         outerStyle() {
