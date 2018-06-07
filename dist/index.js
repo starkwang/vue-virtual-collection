@@ -7,7 +7,7 @@
 		exports["vue-virtual-collection"] = factory(require("vue"));
 	else
 		root["vue-virtual-collection"] = factory(root["vue"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_0__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_1__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -78,12 +78,6 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_0__;
-
-/***/ }),
-/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -103,6 +97,12 @@ var Component = __webpack_require__(8)(
 
 module.exports = Component.exports
 
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_1__;
 
 /***/ }),
 /* 2 */
@@ -139,10 +139,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
-
-var _vue = __webpack_require__(0);
-
-var _vue2 = _interopRequireDefault(_vue);
 
 var _SectionManager = __webpack_require__(4);
 
@@ -239,11 +235,15 @@ exports.default = {
         getComputedStyle: function getComputedStyle(displayItem) {
             if (!displayItem) return;
 
-            var _sectionManager$getCe = this._sectionManager.getCellMetadata(displayItem.index),
-                width = _sectionManager$getCe.width,
-                height = _sectionManager$getCe.height,
-                x = _sectionManager$getCe.x,
-                y = _sectionManager$getCe.y;
+            // display items may have been unregistered from section manager
+            // if collection items have been removed
+            var cell = this._sectionManager.getCellMetadata(displayItem.index);
+            if (!cell) return;
+
+            var width = cell.width,
+                height = cell.height,
+                x = cell.x,
+                y = cell.y;
 
             return {
                 left: x + "px",
@@ -520,11 +520,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _vue = __webpack_require__(0);
+var _vue = __webpack_require__(1);
 
 var _vue2 = _interopRequireDefault(_vue);
 
-var _VirtualCollection = __webpack_require__(1);
+var _VirtualCollection = __webpack_require__(0);
 
 var _VirtualCollection2 = _interopRequireDefault(_VirtualCollection);
 
@@ -676,7 +676,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     style: (_vm.outerStyle),
     on: {
       "&scroll": function($event) {
-        _vm.onScroll($event)
+        return _vm.onScroll($event)
       }
     }
   }, [_c('div', {
