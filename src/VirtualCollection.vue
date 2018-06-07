@@ -104,7 +104,13 @@ export default {
         },
         getComputedStyle(displayItem) {
             if (!displayItem) return
-            const { width, height, x, y } = this._sectionManager.getCellMetadata(displayItem.index)
+
+            // display items may have been unregistered from section manager
+            // if collection items have been removed
+            const cell = this._sectionManager.getCellMetadata(displayItem.index)
+            if (!cell) return
+            
+            const { width, height, x, y } = cell
             return {
                 left: `${x}px`,
                 top: `${y}px`,
