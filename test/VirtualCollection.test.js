@@ -43,6 +43,9 @@ describe('VirtualCollection', () => {
                     collection: items,
                     height: 0,
                     width: 500
+                },
+                scopedSlots: {
+                    cell: '<div slot-scope="props">{{props.data}}</div>'
                 }
             }
         )
@@ -56,10 +59,36 @@ describe('VirtualCollection', () => {
                     collection: items,
                     height: 500,
                     width: 0
+                },
+                scopedSlots: {
+                    cell: '<div slot-scope="props">{{props.data}}</div>'
                 }
             }
         )
         expect(wrapper2.findAll('.cell-container').length).to.equal(0)
+    })
+
+    it('can correctly render cells if data change', () => {
+        let changedData = new Array(1000).fill(0).map((_, index) => ({ data: '#' + index }))
+        const wrapper1 = shallowMount(
+            VirtualCollection,
+            {
+                propsData: {
+                    cellSizeAndPositionGetter,
+                    collection: changedData,
+                    height: 500,
+                    width: 500
+                },
+                scopedSlots: {
+                    cell: '<div slot-scope="props">{{props.data}}</div>'
+                }
+            }
+        )
+        expect(wrapper1.text()).to.equal("#0#1#2#3#4#5#6#7")
+
+        wrapper1.setProps({ collection: changedData.slice(-2) })
+
+        expect(wrapper1.text()).to.equal("#998#999")
     })
 
 
