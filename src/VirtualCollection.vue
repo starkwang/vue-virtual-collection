@@ -79,8 +79,15 @@ export default {
         onCollectionChanged() {
             console.log("Collection changed")
 
+            let collection = this.collection
+
+            // If the collection is flat, wrap it inside a single group
+            if (collection.length > 0 && collection[0].group === undefined) {
+                collection = [{ group: collection }]
+            }
+
             // Create and store managers for each item group
-            this.collection.forEach((groupContainer, i) => {
+            collection.forEach((groupContainer, i) => {
                 const groupIndex = i; // Capture group index for closure
                 const group = groupContainer.group
                 const unwatch = this.$watch(
