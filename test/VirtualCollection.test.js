@@ -12,7 +12,23 @@ function cellSizeAndPositionGetter(item, index) {
     }
 }
 
+function groupedCellSizeAndPositionGetter(item, itemIndex, groupIndex) {
+    // compute size and position
+    return {
+        width: 100,
+        height: 150,
+        x: (groupIndex * 2 + itemIndex % 2) * 110,
+        y: parseInt(itemIndex / 2) * 160
+    }
+}
+
 const items = new Array(1000).fill(0).map((_, index) => ({ data: '#' + index }))
+const groups = [
+    { group: new Array(10).fill(0).map((_, index) => ({ data: "#A" + index })) },
+    { group: new Array(10).fill(0).map((_, index) => ({ data: "#B" + index })) },
+    { group: new Array(10).fill(0).map((_, index) => ({ data: "#C" + index })) },
+    { group: new Array(10).fill(0).map((_, index) => ({ data: "#D" + index })) }
+]
 
 describe('VirtualCollection', () => {
     it('can render cells correctly', () => {
@@ -32,6 +48,29 @@ describe('VirtualCollection', () => {
         )
         expect(wrapper.findAll('.cell-container').length >= 4).to.be.true
         expect(wrapper.text()).to.be.equal('#0#1#2#3')
+    })
+
+    it('can render cells when items are grouped', () => {
+        const wrapper = shallowMount(
+            VirtualCollection,
+            {
+                propsData: {
+                    cellSizeAndPositionGetter: groupedCellSizeAndPositionGetter,
+                    collection: groups,
+                    height: 300,
+                    width: 500
+                },
+                scopedSlots: {
+                    cell: '<div slot-scope="props">{{props.data}}</div>'
+                }
+            }
+        )
+        
+        const groupA = '#A0#A1#A2#A3'
+        const groupB = '#B0#B1#B2#B3'
+        const groupC = '#C0#C1#C2#C3'
+        expect(wrapper.findAll('.cell-container').length >= 12).to.be.true
+        expect(wrapper.text()).to.be.equal(groupA + groupB + groupC)
     })
 
     it('will not render cells if width or height equals zero', () => {
