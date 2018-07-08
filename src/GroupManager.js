@@ -35,6 +35,8 @@ export default class GroupManager {
                 totalWidth = right
             }
         })
+
+        sectionManager.freezeCells()
         
         this._group = group
         this._sectionManager = sectionManager
