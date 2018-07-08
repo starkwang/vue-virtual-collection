@@ -77,8 +77,6 @@ export default {
     },
     methods: {
         onCollectionChanged() {
-            console.log("Collection changed")
-
             let collection = this.collection
 
             // If the collection is flat, wrap it inside a single group
@@ -89,15 +87,14 @@ export default {
             // Create and store managers for each item group
             collection.forEach((groupContainer, i) => {
                 const groupIndex = i; // Capture group index for closure
-                const group = groupContainer.group
                 const unwatch = this.$watch(
                     () => groupContainer,
-                    () => this.onGroupChanged(group, groupIndex),
+                    () => this.onGroupChanged(groupContainer.group, groupIndex),
                     { deep: true }
                 )
 
                 this.groupManagers.push(new GroupManager(
-                    group,
+                    groupContainer.group,
                     groupIndex,
                     this.sectionSize,
                     this.cellSizeAndPositionGetter,
@@ -113,14 +110,13 @@ export default {
             this.totalWidth = Math.max(...this.groupManagers.map(it => it.totalWidth))
         },
         onGroupChanged(group, index) {
-            console.log("Group changed", group, index)
             this.groupManagers[index].updateGroup(group)
             this.updateGridDimensions()
             this.flushDisplayItems()
         },
         getComputedStyle(displayItem) {
             if (!displayItem) return
-
+            
             // Currently displayed items may no longer exist
             // if collection has been modified since
             const groupManager = this.groupManagers[displayItem.groupIndex];
@@ -158,12 +154,12 @@ export default {
                 })
 
                 indices.forEach(itemIndex => {
-                    displayItems.push({
+                    displayItems.push(Object.freeze({
                         groupIndex,
                         itemIndex,
                         key: displayItems.length,
                         ...groupManager.getItem(itemIndex)
-                    })
+                    }))
                 })
             })
 
