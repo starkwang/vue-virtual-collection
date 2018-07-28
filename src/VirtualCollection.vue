@@ -57,8 +57,7 @@ export default {
         return {
             totalHeight: 0,
             totalWidth: 0,
-            displayItems: [],
-            groupManagers: []
+            displayItems: []
         }
     },
     watch: {
@@ -73,6 +72,7 @@ export default {
         }
     },
     created() {
+        this.groupManagers = []
         this.onCollectionChanged()
     },
     methods: {
