@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "/dist/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -82,13 +82,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /* styles */
-__webpack_require__(10)
+__webpack_require__(11)
 
-var Component = __webpack_require__(8)(
+var Component = __webpack_require__(9)(
   /* script */
   __webpack_require__(2),
   /* template */
-  __webpack_require__(9),
+  __webpack_require__(10),
   /* scopeId */
   "data-v-75486378",
   /* cssModules */
@@ -115,36 +115,38 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _SectionManager = __webpack_require__(4);
+var _GroupManager = __webpack_require__(3);
 
-var _SectionManager2 = _interopRequireDefault(_SectionManager);
+var _GroupManager2 = _interopRequireDefault(_GroupManager);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } } //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 exports.default = {
     props: {
@@ -177,73 +179,84 @@ exports.default = {
     },
     data: function data() {
         return {
-            displayItems: [],
             totalHeight: 0,
-            totalWidth: 0
+            totalWidth: 0,
+            displayItems: []
         };
     },
 
     watch: {
         collection: function collection() {
-            this.init();
+            // Dispose previous groups and reset associated data
+            this.groupManagers.forEach(function (manager) {
+                return manager.dispose();
+            });
+            this.groupManagers = [];
+            this.totalHeight = 0;
+            this.totalWidth = 0;
+
+            this.onCollectionChanged();
         }
     },
     created: function created() {
-        this.init();
+        this.groupManagers = [];
+        this.onCollectionChanged();
     },
 
     methods: {
-        init: function init() {
-            this._sectionManager = new _SectionManager2.default(this.sectionSize);
-            this.registerCellsToSectionManager();
-            this.flushDisplayItems();
-        },
-        registerCellsToSectionManager: function registerCellsToSectionManager() {
+        onCollectionChanged: function onCollectionChanged() {
             var _this = this;
 
-            if (!this._sectionManager) {
-                this._sectionManager = new _SectionManager2.default(this.sectionSize);
+            var collection = this.collection;
+
+            // If the collection is flat, wrap it inside a single group
+            if (collection.length > 0 && collection[0].group === undefined) {
+                collection = [{ group: collection }];
             }
-            var totalHeight = 0;
-            var totalWidth = 0;
-            this.collection.forEach(function (item, index) {
-                // register
-                var cellMetadatum = _this.cellSizeAndPositionGetter(item, index);
-                _this._sectionManager.registerCell({
-                    index: index,
-                    cellMetadatum: cellMetadatum
-                });
 
-                // compute total height and total width
-                var x = cellMetadatum.x,
-                    y = cellMetadatum.y,
-                    width = cellMetadatum.width,
-                    height = cellMetadatum.height;
+            // Create and store managers for each item group
+            collection.forEach(function (groupContainer, i) {
+                var groupIndex = i; // Capture group index for closure
+                var unwatch = _this.$watch(function () {
+                    return groupContainer;
+                }, function () {
+                    return _this.onGroupChanged(groupContainer.group, groupIndex);
+                }, { deep: true });
 
-                var bottom = y + height;
-                var right = x + width;
-                if (bottom > totalHeight) {
-                    totalHeight = bottom;
-                }
-                if (right > totalWidth) {
-                    totalWidth = right;
-                }
-                _this.totalHeight = totalHeight;
-                _this.totalWidth = totalWidth;
+                _this.groupManagers.push(new _GroupManager2.default(groupContainer.group, groupIndex, _this.sectionSize, _this.cellSizeAndPositionGetter, unwatch));
             });
+
+            this.updateGridDimensions();
+            this.flushDisplayItems();
+        },
+        updateGridDimensions: function updateGridDimensions() {
+            this.totalHeight = Math.max.apply(Math, _toConsumableArray(this.groupManagers.map(function (it) {
+                return it.totalHeight;
+            })));
+            this.totalWidth = Math.max.apply(Math, _toConsumableArray(this.groupManagers.map(function (it) {
+                return it.totalWidth;
+            })));
+        },
+        onGroupChanged: function onGroupChanged(group, index) {
+            this.groupManagers[index].updateGroup(group);
+            this.updateGridDimensions();
+            this.flushDisplayItems();
         },
         getComputedStyle: function getComputedStyle(displayItem) {
             if (!displayItem) return;
 
-            // display items may have been unregistered from section manager
-            // if collection items have been removed
-            var cell = this._sectionManager.getCellMetadata(displayItem.index);
-            if (!cell) return;
+            // Currently displayed items may no longer exist
+            // if collection has been modified since
+            var groupManager = this.groupManagers[displayItem.groupIndex];
+            if (!groupManager) return;
 
-            var width = cell.width,
-                height = cell.height,
-                x = cell.x,
-                y = cell.y;
+            var cellMetadatum = groupManager.getCellMetadata(displayItem.itemIndex);
+            if (!cellMetadatum) return;
+
+            var width = cellMetadatum.width,
+                height = cellMetadatum.height,
+                x = cellMetadatum.x,
+                y = cellMetadatum.y;
 
             return {
                 left: x + "px",
@@ -264,18 +277,25 @@ exports.default = {
                 scrollTop = this.$refs.outer.scrollTop;
                 scrollLeft = this.$refs.outer.scrollLeft;
             }
-            var indices = this._sectionManager.getCellIndices({
-                height: this.height,
-                width: this.width,
-                x: scrollLeft,
-                y: scrollTop
-            });
+
             var displayItems = [];
-            indices.forEach(function (index) {
-                displayItems.push(_extends({
-                    index: index
-                }, _this2.collection[index]));
+            this.groupManagers.forEach(function (groupManager, groupIndex) {
+                var indices = groupManager.getCellIndices({
+                    height: _this2.height,
+                    width: _this2.width,
+                    x: scrollLeft,
+                    y: scrollTop
+                });
+
+                indices.forEach(function (itemIndex) {
+                    displayItems.push(Object.freeze(_extends({
+                        groupIndex: groupIndex,
+                        itemIndex: itemIndex,
+                        key: displayItems.length
+                    }, groupManager.getItem(itemIndex))));
+                });
             });
+
             if (window.requestAnimationFrame) {
                 window.requestAnimationFrame(function () {
                     _this2.displayItems = displayItems;
@@ -305,6 +325,107 @@ exports.default = {
 
 /***/ }),
 /* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _SectionManager = __webpack_require__(5);
+
+var _SectionManager2 = _interopRequireDefault(_SectionManager);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/** Represents a group of logically-related items */
+var GroupManager = function () {
+    function GroupManager(group, groupId, sectionSize, cellSizeAndPositionGetter, unwatch) {
+        _classCallCheck(this, GroupManager);
+
+        this._groupId = groupId;
+        this._sectionSize = sectionSize;
+        this._cellSizeAndPositionGetter = cellSizeAndPositionGetter;
+        this._unwatch = unwatch;
+        this.totalHeight = 0;
+        this.totalWidth = 0;
+        this.updateGroup(group);
+    }
+
+    _createClass(GroupManager, [{
+        key: "updateGroup",
+        value: function updateGroup(group) {
+            var _this = this;
+
+            var sectionManager = new _SectionManager2.default(this._sectionSize);
+            var totalHeight = 0;
+            var totalWidth = 0;
+
+            group.forEach(function (item, index) {
+                var cellMetadatum = _this._cellSizeAndPositionGetter(item, index, _this._groupId);
+                sectionManager.registerCell({
+                    index: index,
+                    cellMetadatum: cellMetadatum
+                });
+
+                // compute total height and total width
+                var x = cellMetadatum.x,
+                    y = cellMetadatum.y,
+                    width = cellMetadatum.width,
+                    height = cellMetadatum.height;
+
+                var bottom = y + height;
+                var right = x + width;
+                if (bottom > totalHeight) {
+                    totalHeight = bottom;
+                }
+                if (right > totalWidth) {
+                    totalWidth = right;
+                }
+            });
+
+            sectionManager.freezeCells();
+
+            this._group = group;
+            this._sectionManager = sectionManager;
+            this.totalHeight = totalHeight;
+            this.totalWidth = totalWidth;
+        }
+    }, {
+        key: "getCellIndices",
+        value: function getCellIndices(region) {
+            return this._sectionManager.getCellIndices(region);
+        }
+    }, {
+        key: "getCellMetadata",
+        value: function getCellMetadata(index) {
+            return this._sectionManager.getCellMetadata(index);
+        }
+    }, {
+        key: "getItem",
+        value: function getItem(index) {
+            return this._group[index];
+        }
+    }, {
+        key: "dispose",
+        value: function dispose() {
+            this._unwatch();
+        }
+    }]);
+
+    return GroupManager;
+}();
+
+exports.default = GroupManager;
+
+/***/ }),
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -379,7 +500,7 @@ var Section = function () {
 exports.default = Section;
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -391,7 +512,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _Section = __webpack_require__(3);
+var _Section = __webpack_require__(4);
 
 var _Section2 = _interopRequireDefault(_Section);
 
@@ -419,11 +540,17 @@ var SectionManager = function () {
             var cellMetadatum = _ref.cellMetadatum,
                 index = _ref.index;
 
-            this._cellMetadata[index] = cellMetadatum;
+            var frozenCellMetadatum = Object.freeze(cellMetadatum);
+            this._cellMetadata[index] = frozenCellMetadatum;
 
-            this.getSections(cellMetadatum).forEach(function (section) {
+            this.getSections(frozenCellMetadatum).forEach(function (section) {
                 return section.addCellIndex({ index: index });
             });
+        }
+    }, {
+        key: "freezeCells",
+        value: function freezeCells() {
+            Object.freeze(this._cellMetadata);
         }
 
         /** Get all Sections overlapping the specified region. */
@@ -510,7 +637,7 @@ var SectionManager = function () {
 exports.default = SectionManager;
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -539,10 +666,10 @@ var plugin = {
 exports.default = plugin;
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(7)();
+exports = module.exports = __webpack_require__(8)();
 // imports
 
 
@@ -553,7 +680,7 @@ exports.push([module.i, ".vue-virtual-collection[data-v-75486378]{overflow:scrol
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports) {
 
 /*
@@ -609,7 +736,7 @@ module.exports = function() {
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports) {
 
 // this module is a runtime utility for cleaner component module output and will
@@ -666,7 +793,7 @@ module.exports = function normalizeComponent (
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -682,11 +809,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('div', {
     staticClass: "vue-virtual-collection-container",
     style: (_vm.containerStyle)
-  }, _vm._l((_vm.displayItems), function(item, index) {
+  }, _vm._l((_vm.displayItems), function(item) {
     return _c('div', {
-      key: item.index,
+      key: item.key,
       staticClass: "cell-container",
-      style: (_vm.getComputedStyle(item, index))
+      style: (_vm.getComputedStyle(item))
     }, [_vm._t("cell", null, {
       data: item.data
     })], 2)
@@ -694,20 +821,20 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 },staticRenderFns: []}
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(6);
+var content = __webpack_require__(7);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(11)("4c3186bc", content, true);
+var update = __webpack_require__(12)("4c3186bc", content, true);
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -726,7 +853,7 @@ if (typeof DEBUG !== 'undefined' && DEBUG) {
   ) }
 }
 
-var listToStyles = __webpack_require__(12)
+var listToStyles = __webpack_require__(13)
 
 /*
 type StyleObject = {
@@ -928,7 +1055,7 @@ function applyToTag (styleElement, obj) {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports) {
 
 /**
