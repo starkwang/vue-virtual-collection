@@ -1,37 +1,34 @@
 <template>
-    <div>
-        <VirtualCollection :cellSizeAndPositionGetter="cellSizeAndPositionGetter" :collection="items" :height="500" :width="330">
-            <div slot="cell" slot-scope="props">{{props.data}}</div>
-        </VirtualCollection>
+    <div class="container">
+        <button @click="groupItems = !groupItems">
+            {{ groupItems ? "Flatten items" : "Group items" }}
+        </button>
+        <GroupedItems v-if="groupItems" />
+        <FlatItems v-else />
     </div>
 </template>
 
 <script>
-    export default {
-        data () {
-            return {
-                /**
-                 * This will create 1000 items like:
-                 * [
-                 *   { data: '#0' },
-                 *   { data: '#1' },
-                 *   ...
-                 *   { data: '#999' }
-                 * ]
-                 */
-                items: new Array(1000).fill(0).map((_, index) => ({ data: '#' + index }))
-            }
-        },
-        methods: {
-            cellSizeAndPositionGetter(item, index) {
-                // compute size and position
-                return {
-                    width: 100,
-                    height: 150,
-                    x: (index % 2) * 110,
-                    y: parseInt(index / 2) * 160
-                }
-            }
+import GroupedItems from "./GroupedItems"
+import FlatItems from "./FlatItems"
+export default {
+    components: {
+        GroupedItems,
+        FlatItems
+    },
+    data() {
+        return {
+            groupItems: false
         }
     }
+}
 </script>
+
+<style scoped>
+.container {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    justify-items: start;
+    grid-row-gap: 10px;
+}
+</style>

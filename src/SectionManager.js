@@ -11,9 +11,14 @@ export default class SectionManager {
     }
 
     registerCell({ cellMetadatum, index }) {
-        this._cellMetadata[index] = cellMetadatum
+        const frozenCellMetadatum = Object.freeze(cellMetadatum);
+        this._cellMetadata[index] = frozenCellMetadatum
 
-        this.getSections(cellMetadatum).forEach(section => section.addCellIndex({ index }))
+        this.getSections(frozenCellMetadatum).forEach(section => section.addCellIndex({ index }))
+    }
+
+    freezeCells() {
+        Object.freeze(this._cellMetadata)
     }
 
     /** Get all Sections overlapping the specified region. */
