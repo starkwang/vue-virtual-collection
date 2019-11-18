@@ -62,13 +62,7 @@ export default {
     },
     watch: {
         collection() {
-            // Dispose previous groups and reset associated data
-            this.groupManagers.forEach(manager => manager.dispose())
-            this.groupManagers = []
-            this.totalHeight = 0
-            this.totalWidth = 0
-
-            this.onCollectionChanged()
+            this.resetCollection()
         }
     },
     created() {
@@ -76,6 +70,15 @@ export default {
         this.onCollectionChanged()
     },
     methods: {
+        resetCollection() {
+            // Dispose previous groups and reset associated data
+            this.groupManagers.forEach(manager => manager.dispose())
+            this.groupManagers = []
+            this.totalHeight = 0
+            this.totalWidth = 0
+
+            this.onCollectionChanged()
+        },
         onCollectionChanged() {
             let collection = this.collection
 
@@ -136,6 +139,9 @@ export default {
         onScroll(e) {
             this.flushDisplayItems()
         },
+        onContainerResized() {
+            this.resetCollection()
+        },
         flushDisplayItems() {
             let scrollTop = 0
             let scrollLeft = 0
@@ -173,6 +179,13 @@ export default {
                 this.$forceUpdate()
             }
         }
+    },
+    mounted() {
+        this.resizeObserver = new ResizeObserver(this.onContainerResized)
+        this.resizeObserver.observe(this.$refs.outer)
+    },
+    destroyed() {
+        this.resizeObserver.disconnect()
     },
     computed: {
         containerStyle() {
