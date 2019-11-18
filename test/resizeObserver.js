@@ -1,7 +1,6 @@
-export function createFakeResizeObserverController() {
+export function createFakeResizeObserver() {
   class FakeResizeObserver {
-    constructor(callback) {
-      this.callback = callback
+    constructor() {
       this.targets = []
     }
 
@@ -15,20 +14,6 @@ export function createFakeResizeObserverController() {
 
     disconnect() {
       this.targets = []
-    }
-
-    fakeResize(contentRect) {
-      this.targets.forEach(t => {
-        this.callback(
-          [
-            {
-              target: t,
-              contentRect
-            }
-          ],
-          this
-        )
-      })
     }
   }
 
