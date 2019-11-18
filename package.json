@@ -25,15 +25,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/starkwang/vue-virtual-collection.git"
+    "url": "git+https://github.com/vivianlii/vue-virtual-collection.git"
   },
   "author": "starkwang",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/starkwang/vue-virtual-collection/issues"
+    "url": "https://github.com/vivianlii/vue-virtual-collection/issues"
   },
   "sideEffects": false,
-  "homepage": "https://github.com/starkwang/vue-virtual-collection#readme",
+  "homepage": "https://github.com/vivianlii/vue-virtual-collection#readme",
   "devDependencies": {
     "@vue/test-utils": "^1.0.0-beta.16",
     "babel-core": "^6.0.0",
