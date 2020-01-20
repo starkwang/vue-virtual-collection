@@ -181,11 +181,19 @@ export default {
         }
     },
     mounted() {
-        this.resizeObserver = new ResizeObserver(this.onContainerResized)
-        this.resizeObserver.observe(this.$refs.outer)
+        if (ResizeObserver) {
+            this.resizeObserver = new ResizeObserver(this.handleResize)
+            this.resizeObserver.observe(this.$refs.outer)
+        } else {
+            this.$refs.outer.addEventListener('resize', this.handleResize)
+        }
     },
-    destroyed() {
-        this.resizeObserver.disconnect()
+    beforeDestroy() {
+        if (ResizeObserver) {
+            this.resizeObserver.disconnect()
+        } else {
+            this.$refs.outer.removeEventListener('resize', this.handleResize)
+        }
     },
     computed: {
         containerStyle() {
