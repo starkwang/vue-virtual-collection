@@ -187,16 +187,6 @@ exports.default = {
 
     watch: {
         collection: function collection() {
-            this.resetCollection();
-        }
-    },
-    created: function created() {
-        this.groupManagers = [];
-        this.onCollectionChanged();
-    },
-
-    methods: {
-        resetCollection: function resetCollection() {
             // Dispose previous groups and reset associated data
             this.groupManagers.forEach(function (manager) {
                 return manager.dispose();
@@ -206,7 +196,14 @@ exports.default = {
             this.totalWidth = 0;
 
             this.onCollectionChanged();
-        },
+        }
+    },
+    created: function created() {
+        this.groupManagers = [];
+        this.onCollectionChanged();
+    },
+
+    methods: {
         onCollectionChanged: function onCollectionChanged() {
             var _this = this;
 
@@ -271,9 +268,6 @@ exports.default = {
         onScroll: function onScroll(e) {
             this.flushDisplayItems();
         },
-        onContainerResized: function onContainerResized() {
-            this.resetCollection();
-        },
         flushDisplayItems: function flushDisplayItems() {
             var _this2 = this;
 
@@ -313,14 +307,6 @@ exports.default = {
             }
         }
     },
-    mounted: function mounted() {
-        this.resizeObserver = new ResizeObserver(this.onContainerResized);
-        this.resizeObserver.observe(this.$refs.outer);
-    },
-    destroyed: function destroyed() {
-        this.resizeObserver.disconnect();
-    },
-
     computed: {
         containerStyle: function containerStyle() {
             return {
