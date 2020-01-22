@@ -1,6 +1,7 @@
 import { shallowMount } from '@vue/test-utils'
 import VirtualCollection from '../src/VirtualCollection.vue'
 import { assert, expect } from "chai"
+import Vue from 'vue'
 
 function cellSizeAndPositionGetter(item, index) {
     // compute size and position
@@ -127,7 +128,9 @@ describe('VirtualCollection', () => {
 
         wrapper1.setProps({ collection: changedData.slice(-2) })
 
-        expect(wrapper1.text()).to.equal("#998#999")
+        Vue.nextTick(() => {
+            expect(wrapper1.text()).to.equal("#998#999")
+        })
     })
 
 
