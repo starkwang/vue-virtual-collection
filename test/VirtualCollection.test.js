@@ -2,6 +2,7 @@ import { shallowMount } from '@vue/test-utils'
 import VirtualCollection from '../src/VirtualCollection.vue'
 import { assert, expect } from "chai"
 import Vue from 'vue'
+import { createFakeResizeObserverController } from "./resizeObserver"
 
 function cellSizeAndPositionGetter(item, index) {
     // compute size and position
@@ -30,6 +31,10 @@ const groups = [
     { group: new Array(10).fill(0).map((_, index) => ({ data: "#C" + index })) },
     { group: new Array(10).fill(0).map((_, index) => ({ data: "#D" + index })) }
 ]
+
+
+const FakeResizeObserver = createFakeResizeObserverController()
+global.ResizeObserver = FakeResizeObserver
 
 describe('VirtualCollection', () => {
     it('can render cells correctly', () => {
