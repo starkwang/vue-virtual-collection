@@ -182,17 +182,17 @@ export default {
     },
     mounted() {
         if (ResizeObserver) {
-            this.resizeObserver = new ResizeObserver(this.handleResize)
+            this.resizeObserver = new ResizeObserver(this.onContainerResized)
             this.resizeObserver.observe(this.$refs.outer)
         } else {
-            this.$refs.outer.addEventListener('resize', this.handleResize)
+            this.$refs.outer.addEventListener('resize', this.onContainerResized)
         }
     },
     beforeDestroy() {
         if (ResizeObserver) {
             this.resizeObserver.disconnect()
         } else {
-            this.$refs.outer.removeEventListener('resize', this.handleResize)
+            this.$refs.outer.removeEventListener('resize', this.onContainerResized)
         }
     },
     computed: {
