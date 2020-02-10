@@ -99,7 +99,7 @@ export default {
                 this.groupManagers.push(new GroupManager(
                     groupContainer.group,
                     groupIndex,
-                    this.sectionSize,
+                    this.getSmoothSectionSize(),
                     this.cellSizeAndPositionGetter,
                     unwatch
                 ))
@@ -111,6 +111,13 @@ export default {
         updateGridDimensions() {
             this.totalHeight = Math.max(...this.groupManagers.map(it => it.totalHeight))
             this.totalWidth = Math.max(...this.groupManagers.map(it => it.totalWidth))
+        },
+        getSmoothSectionSize() {
+            let smoothMax = Math.max(this.height, this.width , 0) / 2 
+            let smoothMin = smoothMax / 3
+            return this.sectionSize >= smoothMin && this.sectionSize <= smoothMax
+                ? this.sectionSize
+                : (smoothMax + smoothMin) / 2
         },
         onGroupChanged(group, index) {
             this.groupManagers[index].updateGroup(group)

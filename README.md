@@ -252,6 +252,7 @@ Type: `number`
 
 Optionally override the size of the sections a Collection's cells are split into. This is an advanced option and should only be used for performance tuning purposes.
 
+too big or too small will cause reverse performance, will effect by ./src/VirtualCollection.vue getSmoothSectionSize()
 ## Slots
 
 ### cell
