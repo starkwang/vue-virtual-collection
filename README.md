@@ -64,7 +64,7 @@ In the sample below, the collection is instantiated as an `Array` and passed dir
                  *   { data: '#999' }
                  * ]
                  */
-                items: new Array(1000).fill(0).map((_, index) => ({ data: '#' + index }))
+                items: Array.from({length: 1000}, (_, index) => ({ data: '#' + index }))
             }
         },
         methods: {
