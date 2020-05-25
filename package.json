@@ -19,6 +19,7 @@
     "dev": "parcel dev/index.html -d .parcel",
     "dev:demo": "parcel demo/index.html -d .parcel",
     "dist": "webpack",
+    "build": "npm run dist",
     "prepublish": "npm run dist",
     "dist:demo": "parcel build demo/index.html -d demo/dist --no-cache --detailed-report --public-url /vue-virtual-collection/demo/dist",
     "test": "mocha-webpack --webpack-config webpack.config.js --require test/setup.js"

@@ -163,7 +163,7 @@ export default {
                     displayItems.push(Object.freeze({
                         groupIndex,
                         itemIndex,
-                        key: displayItems.length,
+                        key: itemIndex,
                         ...groupManager.getItem(itemIndex)
                     }))
                 })
@@ -172,11 +172,11 @@ export default {
             if (window.requestAnimationFrame) {
                 window.requestAnimationFrame(() => {
                     this.displayItems = displayItems
-                    this.$forceUpdate()
+                    this.$emit('flush-display-item', displayItems)
                 })
             } else {
                 this.displayItems = displayItems
-                this.$forceUpdate()
+                this.$emit('flush-display-item', displayItems)
             }
         }
     },
