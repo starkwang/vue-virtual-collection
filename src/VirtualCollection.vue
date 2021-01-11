@@ -51,6 +51,10 @@ export default {
         sectionSize: {
             type: Number,
             default: 300
+        },
+        containerHeightSpacer: {
+            type: Number,
+            default: 0
         }
     },
     data() {
@@ -127,7 +131,7 @@ export default {
 
             const cellMetadatum = groupManager.getCellMetadata(displayItem.itemIndex)
             if (!cellMetadatum) return
-            
+
             const { width, height, x, y } = cellMetadatum
             return {
                 left: `${x}px`,
@@ -149,7 +153,7 @@ export default {
                 scrollTop = this.$refs.outer.scrollTop
                 scrollLeft = this.$refs.outer.scrollLeft
             }
-            
+
             const displayItems = []
             this.groupManagers.forEach((groupManager, groupIndex) => {
                 var indices = groupManager.getCellIndices({
@@ -198,7 +202,7 @@ export default {
     computed: {
         containerStyle() {
             return {
-                height: this.totalHeight + "px",
+                height: this.totalHeight + this.containerHeightSpacer + "px",
                 width: this.totalWidth + "px"
             }
         },

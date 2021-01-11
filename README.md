@@ -236,7 +236,7 @@ Type: `number`
 
 **Required: ✓**
 
-The width of collection
+The width of collection viewport
 
 ### height
 
@@ -244,7 +244,14 @@ Type: `number`
 
 **Required: ✓**
 
-The height of collection
+The height of collection viewport
+
+### containerHeightSpacer
+
+Type: `number`
+
+Optionally extend the calculated height of the container within the viewport causing the last cards to be pushed off the bottom of the scrollable container 
+
 
 ### sectionSize
 
