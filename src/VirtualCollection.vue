@@ -11,6 +11,7 @@
 .vue-virtual-collection .cell-container {
     position: absolute;
     top: 0;
+    left: 0;
 }
 </style>
 
@@ -138,8 +139,7 @@ export default {
 
             const { width, height, x, y } = cellMetadatum
             return {
-                left: `${x}px`,
-                top: `${y}px`,
+                transform: `translateX(${x}px) translateY(${y}px)`,
                 width: `${width}px`,
                 height: `${height}px`
             }
