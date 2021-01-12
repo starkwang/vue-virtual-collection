@@ -259,6 +259,14 @@ Type: `number`
 
 Optionally override the size of the sections a Collection's cells are split into. This is an advanced option and should only be used for performance tuning purposes.
 
+## Events
+
+### scrolled-to-top
+This event is emitted when the container scrollTop is reduced to 0.
+
+### scrolled-to-bottom
+This event is emitted when the container scrollTop has reach the bottom.
+
 ## Slots
 
 ### header
