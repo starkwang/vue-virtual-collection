@@ -261,6 +261,29 @@ Optionally override the size of the sections a Collection's cells are split into
 
 ## Slots
 
+### header
+The header slot allows you to simulate a full-page mode for the virtual-scroller content. By setting the VirtualCollection height and width to be that of the browser window, the header will then sit on top of the scrollable items however will move out of view when the VirtualCollection is scrolled down.
+
+```html
+<VirtualCollection
+    :cellSizeAndPositionGetter="item => { return { width: item.width, height: item.height, x: item.x, y: item.y }}"
+    :collection="items.items"
+    :height="items.boxHeight"
+    :width="items.boxWidth"
+    :containerHeightSpacer="50"
+    v-on:scrolled-to-top="scrollTop"
+    v-on:scrolled-to-bottom="scrollBottom">
+  <template v-slot:header>
+    <div>
+        This content will sit on top of the scrollable items acting as a header.
+    </div>
+  </template>
+  <div slot="cell" slot-scope="props">
+      {{props.data}}
+  </div>
+</VirtualCollection>
+```
+
 ### cell
 ```html
 <div slot="cell" slot-scope="yourOwnScope">{{yourOwnScope.data.text}}</div>
