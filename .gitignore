@@ -61,3 +61,5 @@ typings/
 
 # dist
 dist
+
+.idea/
