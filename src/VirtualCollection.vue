@@ -150,7 +150,7 @@ export default {
                 this.$emit("scrolled-to-top", target)
             }
             if (target.scrollTop === target.scrollHeight - target.offsetHeight) {
-                this.$emit("scroll-to-bottom", target)
+                this.$emit("scrolled-to-bottom", target)
             }
         },
         onContainerResized () {
