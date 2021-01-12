@@ -143,13 +143,14 @@ export default {
                 height: `${height}px`
             }
         },
-        onScroll (element) {
+        onScroll (event) {
             this.flushDisplayItems()
-            if (element.scrollTop === 0) {
-                this.$emit("scrolled-to-top", element)
+            const target = event.target
+            if (target.scrollTop === 0) {
+                this.$emit("scrolled-to-top", target)
             }
-            if (element.scrollTop === (element.scrollHeight - element.offsetHeight)) {
-                this.$emit("scroll-to-bottom", element)
+            if (target.scrollTop === target.scrollHeight - target.offsetHeight) {
+                this.$emit("scroll-to-bottom", target)
             }
         },
         onContainerResized () {
