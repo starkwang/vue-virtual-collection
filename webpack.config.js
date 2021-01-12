@@ -1,6 +1,6 @@
-var path = require('path')
-var webpack = require('webpack')
-var OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
+var path = require('path');
+var webpack = require('webpack');
+var OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
 
 module.exports = {
   entry: './src/index.js',
@@ -16,11 +16,6 @@ module.exports = {
       {
         test: /\.vue$/,
         loader: 'vue-loader',
-        options: {
-          loaders: {
-            'scss': 'vue-style-loader!css-loader!sass-loader'
-          }
-        }
       },
       {
         test: /\.js$/,
@@ -51,4 +46,4 @@ module.exports = {
       }
     })
   ]
-}
+};

@@ -1,19 +1,22 @@
-<style lang="less" scoped>
+<style scoped>
 .vue-virtual-collection {
     overflow: scroll;
     -webkit-overflow-scrolling: touch;
-    &-container {
-        position: relative;
-    }
-    .cell-container {
-        position: absolute;
-        top: 0;
-    }
+}
+
+.vue-virtual-collection-container {
+    position: relative;
+}
+
+.vue-virtual-collection .cell-container {
+    position: absolute;
+    top: 0;
 }
 </style>
 
 <template>
     <div class="vue-virtual-collection" :style="outerStyle" @scroll.passive="onScroll" ref="outer">
+        <slot name="header"></slot>
         <div class="vue-virtual-collection-container" :style="containerStyle">
             <div v-for="item in displayItems" class="cell-container" :key="item.key" :style="getComputedStyle(item)">
                 <slot name="cell" :data="item.data"></slot>
@@ -24,6 +27,7 @@
 
 <script>
 import GroupManager from "./GroupManager"
+
 export default {
     props: {
         cellSizeAndPositionGetter: {
@@ -37,14 +41,14 @@ export default {
         height: {
             type: Number,
             required: true,
-            validator(value) {
+            validator (value) {
                 return value >= 0
             }
         },
         width: {
             type: Number,
             required: true,
-            validator(value) {
+            validator (value) {
                 return value >= 0
             }
         },
@@ -57,7 +61,7 @@ export default {
             default: 0
         }
     },
-    data() {
+    data () {
         return {
             totalHeight: 0,
             totalWidth: 0,
@@ -65,16 +69,16 @@ export default {
         }
     },
     watch: {
-        collection() {
+        collection () {
             this.resetCollection()
         }
     },
-    created() {
+    created () {
         this.groupManagers = []
         this.onCollectionChanged()
     },
     methods: {
-        resetCollection() {
+        resetCollection () {
             // Dispose previous groups and reset associated data
             this.groupManagers.forEach(manager => manager.dispose())
             this.groupManagers = []
@@ -83,7 +87,7 @@ export default {
 
             this.onCollectionChanged()
         },
-        onCollectionChanged() {
+        onCollectionChanged () {
             let collection = this.collection
 
             // If the collection is flat, wrap it inside a single group
@@ -93,7 +97,7 @@ export default {
 
             // Create and store managers for each item group
             collection.forEach((groupContainer, i) => {
-                const groupIndex = i; // Capture group index for closure
+                const groupIndex = i // Capture group index for closure
                 const unwatch = this.$watch(
                     () => groupContainer,
                     () => this.onGroupChanged(groupContainer.group, groupIndex),
@@ -112,21 +116,21 @@ export default {
             this.updateGridDimensions()
             this.flushDisplayItems()
         },
-        updateGridDimensions() {
+        updateGridDimensions () {
             this.totalHeight = Math.max(...this.groupManagers.map(it => it.totalHeight))
             this.totalWidth = Math.max(...this.groupManagers.map(it => it.totalWidth))
         },
-        onGroupChanged(group, index) {
+        onGroupChanged (group, index) {
             this.groupManagers[index].updateGroup(group)
             this.updateGridDimensions()
             this.flushDisplayItems()
         },
-        getComputedStyle(displayItem) {
+        getComputedStyle (displayItem) {
             if (!displayItem) return
-            
+
             // Currently displayed items may no longer exist
             // if collection has been modified since
-            const groupManager = this.groupManagers[displayItem.groupIndex];
+            const groupManager = this.groupManagers[displayItem.groupIndex]
             if (!groupManager) return
 
             const cellMetadatum = groupManager.getCellMetadata(displayItem.itemIndex)
@@ -140,13 +144,20 @@ export default {
                 height: `${height}px`
             }
         },
-        onScroll(e) {
+        onScroll (event) {
             this.flushDisplayItems()
+            const target = event.target
+            if (target.scrollTop === 0) {
+                this.$emit("scrolled-to-top", target)
+            }
+            if (target.scrollTop === target.scrollHeight - target.offsetHeight) {
+                this.$emit("scrolled-to-bottom", target)
+            }
         },
-        onContainerResized() {
+        onContainerResized () {
             this.resetCollection()
         },
-        flushDisplayItems() {
+        flushDisplayItems () {
             let scrollTop = 0
             let scrollLeft = 0
             if (this.$refs.outer) {
@@ -184,29 +195,29 @@ export default {
             }
         }
     },
-    mounted() {
+    mounted () {
         if (ResizeObserver) {
             this.resizeObserver = new ResizeObserver(this.onContainerResized)
             this.resizeObserver.observe(this.$refs.outer)
         } else {
-            this.$refs.outer.addEventListener('resize', this.onContainerResized)
+            this.$refs.outer.addEventListener("resize", this.onContainerResized)
         }
     },
-    beforeDestroy() {
+    beforeDestroy () {
         if (ResizeObserver) {
             this.resizeObserver.disconnect()
         } else {
-            this.$refs.outer.removeEventListener('resize', this.onContainerResized)
+            this.$refs.outer.removeEventListener("resize", this.onContainerResized)
         }
     },
     computed: {
-        containerStyle() {
+        containerStyle () {
             return {
                 height: this.totalHeight + this.containerHeightSpacer + "px",
                 width: this.totalWidth + "px"
             }
         },
-        outerStyle() {
+        outerStyle () {
             return {
                 height: this.height + "px",
                 width: this.width + "px"
