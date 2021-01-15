@@ -246,11 +246,11 @@ Type: `number`
 
 The height of collection viewport
 
-### containerHeightSpacer
+### containerPaddingBottom
 
 Type: `number`
 
-Optionally extend the calculated height of the container within the viewport causing the last cards to be pushed off the bottom of the scrollable container 
+Optionally extend the calculated height of the collection container, the affect is apparent padding-bottom
 
 
 ### sectionSize

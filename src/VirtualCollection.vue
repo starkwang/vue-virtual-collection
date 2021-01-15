@@ -57,7 +57,11 @@ export default {
             type: Number,
             default: 300
         },
-        containerHeightSpacer: {
+        containerPaddingBottom: {
+            type: Number,
+            default: 0
+        },
+        headerSlotHeight: {
             type: Number,
             default: 0
         }
@@ -161,7 +165,7 @@ export default {
             let scrollTop = 0
             let scrollLeft = 0
             if (this.$refs.outer) {
-                scrollTop = this.$refs.outer.scrollTop
+                scrollTop = this.$refs.outer.scrollTop - this.headerSlotHeight
                 scrollLeft = this.$refs.outer.scrollLeft
             }
 
