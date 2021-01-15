@@ -12,6 +12,32 @@ Vue component for efficiently rendering large collection data. Inspired by [reac
 
 ![Demo](https://starkwang.github.io/vue-virtual-collection/img/demo.png)
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Usage](#usage)
+  - [Install](#install)
+  - [Import](#import)
+  - [Use it!](#use-it)
+    - [Default Usage](#default-usage)
+    - [Item Grouping](#item-grouping)
+  - [Props](#props)
+    - [cellSizeAndPositionGetter](#cellsizeandpositiongetter)
+    - [collection](#collection)
+    - [width](#width)
+    - [height](#height)
+    - [containerPaddingBottom](#containerpaddingbottom)
+    - [sectionSize](#sectionsize)
+  - [Events](#events)
+    - [scrolled-to-top](#scrolled-to-top)
+    - [scrolled-to-bottom](#scrolled-to-bottom)
+  - [Slots](#slots)
+    - [header](#header)
+    - [cell](#cell)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Usage
 
 ## Install

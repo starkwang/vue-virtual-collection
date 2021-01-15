@@ -24,6 +24,7 @@
     "lint:fix": "vue-cli-service lint --fix",
     "prepare": "npm run dist",
     "prepublishOnly": "npm run dist",
+    "readme:toc": "npx doctoc ./README.md",
     "test": "npm run lint && mocha-webpack --webpack-config webpack.config.js --require test/setup.js"
   },
   "repository": {
