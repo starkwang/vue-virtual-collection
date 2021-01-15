@@ -28,6 +28,7 @@ Vue component for efficiently rendering large collection data. Inspired by [reac
     - [width](#width)
     - [height](#height)
     - [containerPaddingBottom](#containerpaddingbottom)
+    - [headerSlotHeight](#headerslotheight)
     - [sectionSize](#sectionsize)
   - [Events](#events)
     - [scrolled-to-top](#scrolled-to-top)

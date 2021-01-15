@@ -18,7 +18,7 @@
   "scripts": {
     "dev": "parcel dev/index.html -d .parcel",
     "dev:demo": "parcel demo/index.html -d .parcel",
-    "dist": "npm run lint && webpack",
+    "dist": "npm run readme:toc && npm run lint && webpack",
     "dist:demo": "parcel build demo/index.html -d demo/dist --no-cache --detailed-report --public-url /vue-virtual-collection/demo/dist",
     "lint": "vue-cli-service lint",
     "lint:fix": "vue-cli-service lint --fix",
