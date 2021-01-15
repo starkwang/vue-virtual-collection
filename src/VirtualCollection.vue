@@ -217,7 +217,7 @@ export default {
     computed: {
         containerStyle () {
             return {
-                height: this.totalHeight + this.containerHeightSpacer + "px",
+                height: this.totalHeight + this.containerPaddingBottom + "px",
                 width: this.totalWidth + "px"
             }
         },
