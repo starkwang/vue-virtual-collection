@@ -278,6 +278,11 @@ Type: `number`
 
 Optionally extend the calculated height of the collection container, the affect is apparent padding-bottom
 
+### headerSlotHeight
+
+Type: `number`
+
+When injecting content into the header slot, you should also add the px height of the slot. This ensure items are removed from view at the right time.
 
 ### sectionSize
 
