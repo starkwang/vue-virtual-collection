@@ -27,12 +27,14 @@ Vue component for efficiently rendering large collection data. Inspired by [reac
     - [collection](#collection)
     - [width](#width)
     - [height](#height)
+    - [scrollToBottomRange](#scrolltobottomrange)
     - [containerPaddingBottom](#containerpaddingbottom)
     - [headerSlotHeight](#headerslotheight)
     - [sectionSize](#sectionsize)
   - [Events](#events)
     - [scrolled-to-top](#scrolled-to-top)
     - [scrolled-to-bottom](#scrolled-to-bottom)
+    - [scrolled-to-bottom-range](#scrolled-to-bottom-range)
   - [Slots](#slots)
     - [header](#header)
     - [cell](#cell)
@@ -273,6 +275,13 @@ Type: `number`
 
 The height of collection viewport
 
+### scrollToBottomRange
+
+Type: `number`
+
+When present the component will emit `scrolled-to-bottom-range` when the bottom is >= 1 and the number provided.
+The `scrolled-to-bottom` will still be fired and the 2 events will not be emitted at the same time.
+
 ### containerPaddingBottom
 
 Type: `number`
@@ -298,6 +307,9 @@ This event is emitted when the container scrollTop is reduced to 0.
 
 ### scrolled-to-bottom
 This event is emitted when the container scrollTop has reach the bottom.
+
+### scrolled-to-bottom-range
+This event is emitted only when a `scrollToBottomRange` value is provided, and is fired when the container is scroller with range of the bottom, the range defined by the said prop.
 
 ## Slots
 

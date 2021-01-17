@@ -61,6 +61,9 @@ export default {
             type: Number,
             default: 0
         },
+        scrollToBottomRange: {
+            type: Number
+        },
         headerSlotHeight: {
             type: Number,
             default: 0
@@ -68,6 +71,7 @@ export default {
     },
     data () {
         return {
+            inRangeHit: false,
             totalHeight: 0,
             totalWidth: 0,
             displayItems: []
@@ -151,11 +155,20 @@ export default {
         onScroll (event) {
             this.flushDisplayItems()
             const target = event.target
+            const total = target.scrollHeight - target.offsetHeight
             if (target.scrollTop === 0) {
                 this.$emit("scrolled-to-top", target)
-            }
-            if (target.scrollTop === target.scrollHeight - target.offsetHeight) {
+            } else if (target.scrollTop === total) {
                 this.$emit("scrolled-to-bottom", target)
+            } else if (this.scrollToBottomRange) {
+                if (target.scrollTop < total && target.scrollTop > (total - this.scrollToBottomRange)) {
+                    if (this.inRangeHit === false) {
+                        this.inRangeHit = true
+                        this.$emit("scrolled-to-bottom-range", target)
+                    }
+                } else {
+                    this.inRangeHit = false
+                }
             }
         },
         onContainerResized () {
