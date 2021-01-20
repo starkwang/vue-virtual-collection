@@ -278,6 +278,7 @@ The height of collection viewport
 ### scrollToBottomRange
 
 Type: `number`
+
 Default: undefined 
 
 When present the component will emit `scrolled-to-bottom-range` when the bottom is >= 1 and the number provided.
@@ -286,6 +287,7 @@ The `scrolled-to-bottom` will still be fired, and the 2 events will not be emitt
 ### containerPaddingBottom
 
 Type: `number`
+
 Default: 0
 
 Optionally extend the calculated height of the collection container, the affect is apparent padding-bottom
@@ -293,6 +295,7 @@ Optionally extend the calculated height of the collection container, the affect 
 ### headerSlotHeight
 
 Type: `number`
+
 Default: 0
 
 When injecting content into the header slot, you should also add the px height of the slot. This ensure items are removed from view at the right time.
@@ -300,6 +303,7 @@ When injecting content into the header slot, you should also add the px height o
 ### sectionSize
 
 Type: `number`
+
 Default: 300
 
 Optionally override the size of the sections a Collection's cells are split into. This is an advanced option and should only be used for performance tuning purposes.
