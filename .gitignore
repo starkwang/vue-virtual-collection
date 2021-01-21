@@ -60,6 +60,6 @@ typings/
 .env
 
 # dist
-dist
+/dist
 
 .idea/
