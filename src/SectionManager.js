@@ -11,10 +11,10 @@ export default class SectionManager {
     }
 
     registerCell({ cellMetadatum, index }) {
-        const frozenCellMetadatum = Object.freeze(cellMetadatum);
+        const frozenCellMetadatum = Object.freeze(cellMetadatum)
         this._cellMetadata[index] = frozenCellMetadatum
 
-        this.getSections(frozenCellMetadatum).forEach(section => section.addCellIndex({ index }))
+        this.getSections(frozenCellMetadatum).forEach((section) => section.addCellIndex({ index }))
     }
 
     freezeCells() {
@@ -39,7 +39,7 @@ export default class SectionManager {
                         height: this._sectionSize,
                         width: this._sectionSize,
                         x: sectionX * this._sectionSize,
-                        y: sectionY * this._sectionSize
+                        y: sectionY * this._sectionSize,
                     })
                 }
 
@@ -62,14 +62,14 @@ export default class SectionManager {
     getCellIndices({ height, width, x, y }) {
         const indices = {}
 
-        this.getSections({ height, width, x, y }).forEach(section =>
-            section.getCellIndices().forEach(index => {
+        this.getSections({ height, width, x, y }).forEach((section) =>
+            section.getCellIndices().forEach((index) => {
                 indices[index] = index
             })
         )
 
         // Object keys are strings; this function returns numbers
-        return Object.keys(indices).map(index => indices[index])
+        return Object.keys(indices).map((index) => indices[index])
     }
 
     getCellMetadata(index) {

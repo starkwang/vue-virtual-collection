@@ -1,11 +1,11 @@
-import SectionManager from "./SectionManager";
+import SectionManager from "./SectionManager"
 
 /** Represents a group of logically-related items */
 export default class GroupManager {
-    constructor (group, groupId, sectionSize, cellSizeAndPositionGetter, unwatch) {
+    constructor(group, groupId, sectionSize, cellSizeAndPositionGetter, unwatch) {
         this._groupId = groupId
         this._sectionSize = sectionSize
-        this._cellSizeAndPositionGetter = cellSizeAndPositionGetter;
+        this._cellSizeAndPositionGetter = cellSizeAndPositionGetter
         this._unwatch = unwatch
         this.totalHeight = 0
         this.totalWidth = 0
@@ -21,9 +21,9 @@ export default class GroupManager {
             const cellMetadatum = this._cellSizeAndPositionGetter(item, index, this._groupId)
             sectionManager.registerCell({
                 index,
-                cellMetadatum
+                cellMetadatum,
             })
-            
+
             // compute total height and total width
             const { x, y, width, height } = cellMetadatum
             const bottom = y + height
@@ -37,7 +37,7 @@ export default class GroupManager {
         })
 
         sectionManager.freezeCells()
-        
+
         this._group = group
         this._sectionManager = sectionManager
         this.totalHeight = totalHeight
@@ -45,7 +45,7 @@ export default class GroupManager {
     }
 
     getCellIndices(region) {
-        return this._sectionManager.getCellIndices(region);
+        return this._sectionManager.getCellIndices(region)
     }
 
     getCellMetadata(index) {

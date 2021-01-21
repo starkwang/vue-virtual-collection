@@ -12,6 +12,35 @@ Vue component for efficiently rendering large collection data. Inspired by [reac
 
 ![Demo](https://starkwang.github.io/vue-virtual-collection/img/demo.png)
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Usage](#usage)
+  - [Install](#install)
+  - [Import](#import)
+  - [Use it!](#use-it)
+    - [Default Usage](#default-usage)
+    - [Item Grouping](#item-grouping)
+  - [Props](#props)
+    - [cellSizeAndPositionGetter](#cellsizeandpositiongetter)
+    - [collection](#collection)
+    - [width](#width)
+    - [height](#height)
+    - [scrollToBottomRange](#scrolltobottomrange)
+    - [containerPaddingBottom](#containerpaddingbottom)
+    - [headerSlotHeight](#headerslotheight)
+    - [sectionSize](#sectionsize)
+  - [Events](#events)
+    - [scrolled-to-top](#scrolled-to-top)
+    - [scrolled-to-bottom](#scrolled-to-bottom)
+    - [scrolled-to-bottom-range](#scrolled-to-bottom-range)
+  - [Slots](#slots)
+    - [header](#header)
+    - [cell](#cell)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Usage
 
 ## Install
@@ -236,7 +265,7 @@ Type: `number`
 
 **Required: ✓**
 
-The width of collection
+The width of collection viewport
 
 ### height
 
@@ -244,15 +273,76 @@ Type: `number`
 
 **Required: ✓**
 
-The height of collection
+The height of collection viewport
+
+### scrollToBottomRange
+
+Type: `number`
+
+Default: undefined 
+
+When present the component will emit `scrolled-to-bottom-range` when the bottom is >= 1 and the number provided.
+The `scrolled-to-bottom` will still be fired, and the 2 events will not be emitted at the same time.
+
+### containerPaddingBottom
+
+Type: `number`
+
+Default: 0
+
+Optionally extend the calculated height of the collection container, the affect is apparent padding-bottom
+
+### headerSlotHeight
+
+Type: `number`
+
+Default: 0
+
+When injecting content into the header slot, you should also add the px height of the slot. This ensure items are removed from view at the right time.
 
 ### sectionSize
 
 Type: `number`
 
+Default: 300
+
 Optionally override the size of the sections a Collection's cells are split into. This is an advanced option and should only be used for performance tuning purposes.
 
+## Events
+
+### scrolled-to-top
+This event is emitted when the container scrollTop is reduced to 0.
+
+### scrolled-to-bottom
+This event is emitted when the container scrollTop has reach the bottom.
+
+### scrolled-to-bottom-range
+This event is emitted only when a `scrollToBottomRange` value is provided, and is fired when the container is scroller with range of the bottom, the range defined by the said prop.
+
 ## Slots
+
+### header
+The header slot allows you to simulate a full-page mode for the virtual-scroller content. By setting the VirtualCollection height and width to be that of the browser window, the header will then sit on top of the scrollable items however will move out of view when the VirtualCollection is scrolled down.
+
+```html
+<VirtualCollection
+    :cellSizeAndPositionGetter="item => { return { width: item.width, height: item.height, x: item.x, y: item.y }}"
+    :collection="items.items"
+    :height="items.boxHeight"
+    :width="items.boxWidth"
+    :containerHeightSpacer="50"
+    v-on:scrolled-to-top="scrollTop"
+    v-on:scrolled-to-bottom="scrollBottom">
+  <template v-slot:header>
+    <div>
+        This content will sit on top of the scrollable items acting as a header.
+    </div>
+  </template>
+  <div slot="cell" slot-scope="props">
+      {{props.data}}
+  </div>
+</VirtualCollection>
+```
 
 ### cell
 ```html
