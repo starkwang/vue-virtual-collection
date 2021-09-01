@@ -19,6 +19,7 @@
     <div class="vue-virtual-collection" :style="outerStyle" @scroll.passive="onScroll" ref="outer">
         <slot name="header"></slot>
         <div class="vue-virtual-collection-container" :style="containerStyle">
+            <slot name="header-inner-container"></slot>
             <div v-for="item in displayItems" class="cell-container" :key="item.key" :style="getComputedStyle(item)">
                 <slot name="cell" :data="item.data"></slot>
             </div>

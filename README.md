@@ -344,6 +344,31 @@ The header slot allows you to simulate a full-page mode for the virtual-scroller
 </VirtualCollection>
 ```
 
+### header-inner-container
+The header-inner-container slot is injected into the `div.vue-virtual-collection-container` but appears before cells. Additionally this slot is not removed from the DOM on scroll unlike the cells.
+
+```html
+<VirtualCollection
+    :cellSizeAndPositionGetter="item => { return { width: item.width, height: item.height, x: item.x, y: item.y }}"
+    :collection="items.items"
+    :height="items.boxHeight"
+    :width="items.boxWidth"
+    :containerHeightSpacer="50"
+    v-on:scrolled-to-top="scrollTop"
+    v-on:scrolled-to-bottom="scrollBottom">
+
+  <template v-slot:header-inner-container>
+    <div class="filter-controls">
+        <!-- inject your component here -->
+    </div>
+  </template>
+  
+  <div slot="cell" slot-scope="props">
+      {{props.data}}
+  </div>
+</VirtualCollection>
+```
+
 ### cell
 ```html
 <div slot="cell" slot-scope="yourOwnScope">{{yourOwnScope.data.text}}</div>
