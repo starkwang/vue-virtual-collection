@@ -145,11 +145,12 @@ export default {
             const cellMetadatum = groupManager.getCellMetadata(displayItem.itemIndex)
             if (!cellMetadatum) return
 
-            const { width, height, x, y } = cellMetadatum
+            const { width, height, x, y, style } = cellMetadatum
             return {
                 transform: `translateX(${x}px) translateY(${y}px)`,
                 width: `${width}px`,
-                height: `${height}px`
+                height: `${height}px`,
+                ...style
             }
         },
         onScroll (event) {
