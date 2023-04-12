@@ -37,6 +37,7 @@ Vue component for efficiently rendering large collection data. Inspired by [reac
     - [scrolled-to-bottom-range](#scrolled-to-bottom-range)
   - [Slots](#slots)
     - [header](#header)
+    - [footer](#footer)
     - [cell](#cell)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -341,6 +342,29 @@ The header slot allows you to simulate a full-page mode for the virtual-scroller
   <div slot="cell" slot-scope="props">
       {{props.data}}
   </div>
+</VirtualCollection>
+```
+
+### footer
+You can add content at the footer of the component by using footer slot
+
+```html
+<VirtualCollection
+    :cellSizeAndPositionGetter="item => { return { width: item.width, height: item.height, x: item.x, y: item.y }}"
+    :collection="items.items"
+    :height="items.boxHeight"
+    :width="items.boxWidth"
+    :containerHeightSpacer="50"
+    v-on:scrolled-to-top="scrollTop"
+    v-on:scrolled-to-bottom="scrollBottom">
+  <div slot="cell" slot-scope="props">
+      {{props.data}}
+  </div>
+  <template v-slot:footer>
+    <div>
+        This content will sit on bottom of the scrollable items acting as a footer.
+    </div>
+  </template>
 </VirtualCollection>
 ```
 

@@ -23,6 +23,7 @@
                 <slot name="cell" :data="item.data"></slot>
             </div>
         </div>
+        <slot name="footer"></slot>
     </div>
 </template>
 
